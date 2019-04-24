@@ -21,13 +21,15 @@ const AbsoluteLayout = (function(_super) {
 
   AbsoluteLayout.prototype.setCustomLeft = function(view, value) {
     var isPercent = typeof value === "string" && value.indexOf("%") >= 0;
-    if(isPercent) absoluteLayout_01.setLeft(view, this.getMeasuredWidth() * (parseFloat(value) / 100));
+    var { width } = this.getActualSize();
+    if(isPercent) absoluteLayout_01.setLeft(view, width * (parseFloat(value) / 100));
       else absoluteLayout_01.setLeft(view, value);
   };
 
   AbsoluteLayout.prototype.setCustomTop = function(view, value) {
     var isPercent = typeof value === "string" && value.indexOf("%") >= 0;
-    if(isPercent) absoluteLayout_01.setTop(view, this.getMeasuredHeight() * (parseFloat(value) / 100));
+    var { height } = this.getActualSize();
+    if(isPercent) absoluteLayout_01.setTop(view, height * (parseFloat(value) / 100));
       else absoluteLayout_01.setTop(view, value);
   };
 
