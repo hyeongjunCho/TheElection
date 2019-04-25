@@ -1,6 +1,6 @@
 <template>
     <Page class="page" actionBarHidden="true" width="100%" height="100%">
-        <FixedAbsoluteLayout class="pageLayout" backgroundColor="#eeeeee" width="99%" height="100%">
+        <FixedAbsoluteLayout class="pageLayout" backgroundColor="#eeeeee" width="100%" height="100%">
             <Label customTop="1%" customLeft="1%" width="50%" height="50%" backgroundColor="#ffffff" />
             <Button class="info rates" customTop="4.7%" customLeft="61.6%" text="Rates" textWrap="true" />
             <Button class="info status" customTop="11.7%" customLeft="61.6%" text="Status" textWrap="true" />
