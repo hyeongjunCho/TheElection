@@ -12,7 +12,7 @@
             </Label>
             <Button class="info rates" customTop="4.7%" customLeft="61.6%" text="Rates" textWrap="true" />
             <Button class="info status" customTop="11.7%" customLeft="61.6%" text="Status" textWrap="true" />
-            <FixedAbsoluteLayout class="map" customTop="20%" customLeft="10%" width="80%" height="69.3%" backgroundColor="white">
+            <FixedAbsoluteLayout class="map" customTop="25%" customLeft="3.4%" width="93.2%" height="63.0%" backgroundColor="white">
                 <SVGImage class="submap" src="~/static/image/Seoul.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
                 <SVGImage class="submap" src="~/static/image/Busan.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
                 <SVGImage class="submap" src="~/static/image/Daegu.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
@@ -30,6 +30,9 @@
                 <SVGImage class="submap" src="~/static/image/SouthGyeongsang.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
                 <SVGImage class="submap" src="~/static/image/Jeju.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
                 <SVGImage class="submap" src="~/static/image/Sejong.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
+                <SVGImage class="submap" src="~/static/image/test.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
+                <Image class="submap" strecth="none" src="~/static/image/test.svg" width="100%" height="100%" customTop="0%" customLeft="0%" />
+                <Image class="submap" strecth="none" src="~/static/image/triangle.png" width="100%" height="100%" customTop="0%" customLeft="0%" />
             </FixedAbsoluteLayout>
         </FixedAbsoluteLayout>
     </Page>
