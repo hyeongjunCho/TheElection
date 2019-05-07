@@ -1,37 +1,22 @@
 <template>
     <Page ref="page" class="page" actionBarHidden="true" width="100%" height="100%">
-        <FixedAbsoluteLayout ref="pageLayout" class="pageLayout" backgroundColor="#f0f0f0" width="100%" height="100%">
-            <Label v-if="!loaded" ref="loading" class="loading" width="100%" height="100%" backgroundColor="blue" />
-            <Label class="Dday" customTop="5%" customLeft="10%" v-model="Dday" />
-            <Label class="places" textWrap="true" customTop="4.7%" customLeft="35%" width="65%" style="word-break:word;z-index:1;">
+        <FixedAbsoluteLayout ref="pageLayout" class="pageLayout" backgroundColor="#ffffff" width="100%" height="100%">
+            <FixedAbsoluteLayout v-if="!loaded" ref="loading" class="loading" width="100%" height="100%" top="0" left="0">
+                <Label customLeft="35%" customTop="35%" width="30%" height="30%" />
+            </FixedAbsoluteLayout>
+            <Label class="Dday" :class="'width' + screenWidth" customTop="5%" customLeft="10%" v-model="Dday" />
+            <Label class="places" :class="'width' + screenWidth" textWrap="true" customTop="4.7%" customLeft="35%" width="65%" style="word-break:word;z-index:1;">
                 <FormattedString>
-                    <Span v-model="firstPlace"/>
-                    <Span v-model="secondPlace"/>
-                    <Span v-model="thirdPlace"/>
-                    <Span v-model="fourthPlace"/>
-                    <!-- <Span v-model="svgGangwon"/> -->
+                    <Span class="" v-model="firstPlace"/>
+                    <Span class="" v-model="secondPlace"/>
+                    <Span class="" v-model="thirdPlace"/>
+                    <Span class="" v-model="fourthPlace"/>
+                    <!-- <Span v-model="screenWidth"/> -->
                 </FormattedString>
             </Label>
-            <Button class="info rates" customTop="4.7%" customLeft="66.6%" text="Rates" textWrap="true" />
-            <Button class="info status" customTop="11.7%" customLeft="66.6%" text="Status" textWrap="true" />
+            <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" text="Rates" textWrap="true" />
+            <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" text="Status" textWrap="true" />
             <FixedAbsoluteLayout class="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
-                <!-- <Webview class="submap" :src="svgSeoul" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgBusan" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgDaegu" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgIncheon" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgGwangju" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgDaejeon" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgUlsan" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgGyeonggi" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgGangwon" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgNorthChungcheong" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgSouthChungcheong" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgNorthJeolla" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgSouthJeolla" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgNorthGyeongsang" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgSouthGyeongsang" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgJeju" width="100%" height="100%" customTop="0%" customLeft="0%" />
-                <Webview class="submap" :src="svgSejong" width="100%" height="100%" customTop="0%" customLeft="0%" /> -->
                 <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
             </FixedAbsoluteLayout>
         </FixedAbsoluteLayout>
@@ -42,13 +27,21 @@
     export default {
         data: () => {
             return {
+                screenWidth: Math.round(require("platform").screen.mainScreen.widthDIPs / 100) * 100,
                 loaded: false,
-                svgOpen: '<div><p id="activeCity" style="position:absolute;z-index:2;user-select:none;"><div id="ratingOnCity" style="user-select:none;position:absolute;display:none;z-index:1;width:30%;height:30%;background-color:gray"></div></p><svg xmlns:mapsvg="http://mapsvg.com" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" mapsvg:geoViewBox="125.384480 38.612150 130.921968 33.194037" viewBox="0 0 524.23737 630.5871" width="97%" height="97%" style="position:absolute;margin:0;padding:0;filter:drop-shadow(6px 6px 3px gray);">',
+                svgOpen: `
+<div>
+<div id="ratingOnCity" style="user-select:none;position:absolute;border:2px solid black;display:block;z-index:1;width:40%;height:25%;background-color:white;bottom:0;right:0;">
+<p id="activeCity" style="position:absolute;z-index:2;user-select:none;bottom:0;right:0;">
+</p>
+</div>
+<svg xmlns:mapsvg="http://mapsvg.com" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" mapsvg:geoViewBox="125.384480 38.612150 130.921968 33.194037" viewBox="0 0 524.23737 630.5871" width="97%" height="97%" style="position:absolute;margin:0;padding:0;filter:drop-shadow(6px 6px 3px gray);">
+`,
                 pathOpen: '<path ',
                 svgFill: ' fill=',
                 pathOnClick: ' onclick=',
                 pathStyleOpen: ' style="',
-                pathStyleClose: '"',
+                pathStyleClose: '" ',
                 pathShadow: 'box-shadow:5px 5px 5px 5px;',
                 pathClose: '/>',
                 svgClose: '</svg></div>',
@@ -91,7 +84,7 @@
                 this.loaded = true;
             },
             mapOnClick(e, city) {
-                return `document.getElementById('activeCity').innerHTML='${city}';document.getElementById('ratingOnCity').style.display='block';document.getElementById('ratingOnCity').style.left='${((e.touches || [])[0] || {}).screenX}px';document.getElementById('ratingOnCity').style.top='${((e.touches || [])[0] || {}).clientY}px';`
+                return `document.getElementById('activeCity').innerHTML='${city}';document.getElementById('ratingOnCity').style.display='block';`
             },
         },
         computed: {
@@ -204,7 +197,7 @@
                 return this.pathOpen + this.southChungcheong + this.svgFill + this.svgSouthChungcheongColor + this.pathOnClick + `"${this.mapOnClick(e, '층남')}"` + this.pathClose;
             },
             svgSouthGyeongsang(e) {
-                return this.pathOpen + this.southGyeongsang + this.svgFill + this.svgSouthGyeongsangColor + this.pathOnClick + `"${this.mapOnClick(e, '경남')}"` + this.pathClose;
+                return this.pathOpen + this.pathStyleOpen + '"border-bottom-width:10px;border-bottom-color:red;"' + this.pathStyleClose + this.southGyeongsang + this.svgFill + this.svgSouthGyeongsangColor + this.pathOnClick + `"${this.mapOnClick(e, '경남')}"` + this.pathClose;
             },
             svgSouthJeolla(e) {
                 return this.pathOpen + this.southJeolla + this.svgFill + this.svgSouthJeollaColor + this.pathOnClick + `"${this.mapOnClick(e, '전남')}"` + this.pathClose;
@@ -225,34 +218,6 @@
     // End custom common variables
 
     // Custom styles
-    @function em($number) {
-        @if (min-width: 1080px) {
-            @return $number * 14;
-        }
-        @if (min-width: 800px) {
-            @return $number * 12;
-        }
-        @if (min-width: 733px) {
-            @return $number * 11;
-        }
-        @if (min-width: 667px) {
-            @return $number * 10;
-        }
-        @if (min-width: 600px) {
-            @return $number * 9;
-        }
-        @if (min-width: 533px) {
-            @return $number * 8;
-        }
-        @if (min-width: 467px) {
-            @return $number * 7;
-        }
-        @if (min-width: 400px) {
-            @return $number * 6;
-        }
-        @return $number * 5;
-    }
-
     * {
         user-select: none;
         user-drag: none;
@@ -265,17 +230,130 @@
     .loading {
         position: relative;
         z-index: 9999;
+        background-color: rgb(220, 240, 148);
+        Label {
+            position: absolute;
+            background-color: red;
+        }
     }
 
     .Dday {
         position: relative;
-        font-size: em(1.4px);
+        font-size: (3 * 7.5);
+        &.width400 {
+            font-size: (4 * 7.5);
+        }
+        &.width500 {
+            font-size: (5 * 7.5);
+        }
+        &.width600 {
+            font-size: (6 * 7.5);
+        }
+        &.width700 {
+            font-size: (7 * 7.5);
+        }
+        &.width800 {
+            font-size: (8 * 7.5);
+        }
+        &.width900 {
+            font-size: (9 * 7.5);
+        }
+        &.width1000 {
+            font-size: (10 * 7.5);
+        }
+        &.width1100 {
+            font-size: (11 * 7.5);
+        }
+        &.width1200 {
+            font-size: (12 * 7.5);
+        }
+        &.width1300 {
+            font-size: (13 * 7.5);
+        }
+        &.width1400 {
+            font-size: (14 * 7.5);
+        }
+        &.width1500 {
+            font-size: (15 * 7.5);
+        }
+        &.width1600 {
+            font-size: (16 * 7.5);
+        }
+        &.width1700 {
+            font-size: (17 * 7.5);
+        }
+        &.width1800 {
+            font-size: (18 * 7.5);
+        }
+        &.width1900 {
+            font-size: (19 * 7.5);
+        }
+        &.width2000 {
+            font-size: (20 * 7.5);
+        }
+        &.width2100 {
+            font-size: (21 * 7.5);
+        }
         color: black;
     }
 
     .places {
         position: relative;
-        font-size: em(1px);
+        font-size: (3 * 5);
+        &.width400 {
+            font-size: (4 * 5);
+        }
+        &.width500 {
+            font-size: (5 * 5);
+        }
+        &.width600 {
+            font-size: (6 * 5);
+        }
+        &.width700 {
+            font-size: (7 * 5);
+        }
+        &.width800 {
+            font-size: (8 * 5);
+        }
+        &.width900 {
+            font-size: (9 * 5);
+        }
+        &.width1000 {
+            font-size: (10 * 5);
+        }
+        &.width1100 {
+            font-size: (11 * 5);
+        }
+        &.width1200 {
+            font-size: (12 * 5);
+        }
+        &.width1300 {
+            font-size: (13 * 5);
+        }
+        &.width1400 {
+            font-size: (14 * 5);
+        }
+        &.width1500 {
+            font-size: (15 * 5);
+        }
+        &.width1600 {
+            font-size: (16 * 5);
+        }
+        &.width1700 {
+            font-size: (17 * 5);
+        }
+        &.width1800 {
+            font-size: (18 * 5);
+        }
+        &.width1900 {
+            font-size: (19 * 5);
+        }
+        &.width2000 {
+            font-size: (20 * 5);
+        }
+        &.width2100 {
+            font-size: (21 * 5);
+        }
     }
 
     .page {
@@ -284,14 +362,68 @@
 
     .info {
         position: relative;
-        background-color: #f0f0f0;
+        background-color: #ffffff;
         width: 20%;
         height: 6%;
         padding: 0;
         color: black;
-        border-width: 1px 1px 1px 1px;
-        border-radius: em(0.35px);
-        font-size: em(1px);
+        border-width: 1 1 1 1;
+        border-radius: 5;
+        font-size: (3 * 5);
+        &.width400 {
+            font-size: (4 * 5);
+        }
+        &.width500 {
+            font-size: (5 * 5);
+        }
+        &.width600 {
+            font-size: (6 * 5);
+        }
+        &.width700 {
+            font-size: (7 * 5);
+        }
+        &.width800 {
+            font-size: (8 * 5);
+        }
+        &.width900 {
+            font-size: (9 * 5);
+        }
+        &.width1000 {
+            font-size: (10 * 5);
+        }
+        &.width1100 {
+            font-size: (11 * 5);
+        }
+        &.width1200 {
+            font-size: (12 * 5);
+        }
+        &.width1300 {
+            font-size: (13 * 5);
+        }
+        &.width1400 {
+            font-size: (14 * 5);
+        }
+        &.width1500 {
+            font-size: (15 * 5);
+        }
+        &.width1600 {
+            font-size: (16 * 5);
+        }
+        &.width1700 {
+            font-size: (17 * 5);
+        }
+        &.width1800 {
+            font-size: (18 * 5);
+        }
+        &.width1900 {
+            font-size: (19 * 5);
+        }
+        &.width2000 {
+            font-size: (20 * 5);
+        }
+        &.width2100 {
+            font-size: (21 * 5);
+        }
         &:active {
             background-color: lightgray;
         }
