@@ -24,7 +24,8 @@
     "nativescript-dev-webpack": "~0.21.0",
     "nativescript-vue-template-compiler": "~2.2.0",
     "node-sass": "~4.12.0",
-    "vue-loader": "~15.4.0"
+    "vue-loader": "~15.4.0",
+    "vuex": "^3.1.1"
   },
   "gitHead": "c175016cf900d406d2428bb6c4fcbb62093fb351",
   "readme": "NativeScript Application"
