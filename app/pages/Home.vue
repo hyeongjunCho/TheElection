@@ -75,6 +75,7 @@
             };
         },
         created() {
+            this.$store.dispatch('initializeRegions');
             this.partyColors = [null, this.blue, this.red, this.green, this.yellow];
             this.DdayInternal--;
         },
@@ -98,9 +99,22 @@
             mapOnClick(e, city) {
                 return `document.getElementById('activeCity').innerHTML='${city}';document.getElementById('ratingOnCity').style.display='block';`
             },
+            makeSortedRatings(obj) {
+                let sortedArrayOfObject = [];
+                for (let i = 0; i < Object.keys(obj).length; i++) {
+                    sortedArrayOfObject.push({});
+                    sortedArrayOfObject[i].candidate = Object.keys(obj)[i];
+                    sortedArrayOfObject[i].rating = obj[Object.keys(obj)[i]];
+                }
+                sortedArrayOfObject.sort((a, b) => {
+                    return a.rating < b.rating ? 1 : -1;
+                });
+                return sortedArrayOfObject
+            },
         },
         watch: {
             DdayInternal() {
+                this.$store.dispatch('setRating');
                 this.firstPlaceColor = this.partyColors[this.firstPlaceInternal.party];
                 this.secondPlaceColor = this.partyColors[this.secondPlaceInternal.party];
                 this.thirdPlaceColor = this.partyColors[this.thirdPlaceInternal.party];
@@ -111,29 +125,35 @@
             Dday() {
                 return "D-" + (this.DdayInternal || 365);
             },
+            ratings() {
+                return this.$store.getters.getTotalRatings || {};
+            },
+            sortedRatings() {
+                return this.makeSortedRatings(this.ratings) || Array(4);
+            },
             firstPlace() {
                 return this.firstPlaceInternal.party + " " + (this.firstPlaceInternal.rating || 0) + "%\n";
             },
             firstPlaceInternal() {
-                return {rating: 50, party: 1, num: 1};
+                return {rating: this.sortedRatings[0].rating, party: Math.ceil(this.sortedRatings[0].candidate / 3), num: this.sortedRatings[0].candidate % 3};
             },
             secondPlace() {
                 return this.secondPlaceInternal.party + " " + (this.secondPlaceInternal.rating || 0) + "%\n";
             },
             secondPlaceInternal() {
-                return {rating: 30, party: 1, num: 2};
+                return {rating: this.sortedRatings[1].rating, party: Math.ceil(this.sortedRatings[1].candidate / 3), num: this.sortedRatings[1].candidate % 3}
             },
             thirdPlace() {
                 return this.thirdPlaceInternal.party + " " + (this.thirdPlaceInternal.rating || 0) + "%\n";
             },
             thirdPlaceInternal() {
-                return {rating: 10, party: 2, num: 1};
+                return {rating: this.sortedRatings[2].rating, party: Math.ceil(this.sortedRatings[2].candidate / 3), num: this.sortedRatings[2].candidate % 3}
             },
             fourthPlace() {
                 return this.fourthPlaceInternal.party + " " + (this.fourthPlaceInternal.rating || 0) + "%\n";
             },
             fourthPlaceInternal() {
-                return {rating: 5, party: 3, num: 1};
+                return {rating: this.sortedRatings[3].rating, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3}
             },
             svgBusanColor() {
                 return this.red;
