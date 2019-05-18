@@ -11,7 +11,6 @@
                     <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
                     <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
                     <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
-                    <!-- <Span v-model="screenWidth"/> -->
                 </FormattedString>
             </Label>
             <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" text="Rates" textWrap="true" />
@@ -35,6 +34,7 @@
                 partyColors: [],
                 screenWidth: Math.round(require("platform").screen.mainScreen.widthDIPs / 100) * 100,
                 loaded: false,
+                storeLoading: false,
                 svgOpen: `
 <div>
 <div id="ratingOnCity" style="user-select:none;position:absolute;border:2px solid black;display:block;z-index:1;width:40%;height:25%;background-color:white;bottom:0;right:0;">
@@ -75,15 +75,24 @@
             };
         },
         created() {
-            this.$store.dispatch('initializeRegions');
             this.partyColors = [null, this.blue, this.red, this.green, this.yellow];
-            this.DdayInternal--;
+            this.$store.dispatch('initializeRegions')
+                .then(() => {
+                    const temp = setInterval(() => {
+                        if (this.$store.getters.getRegions === 17) {
+                            this.DdayInternal--;
+                            const foo = setInterval(() => {
+                                if (this.DdayInternal < 366) {
+                                    this.DdayInternal--;
+                                }
+                                if (this.DdayInternal === 0) clearInterval(foo);
+                            }, 3000);
+                            clearInterval(temp);
+                        }
+                    }, 1000);
+                });
         },
         mounted() {
-            const foo = setInterval(() => {
-                this.DdayInternal--;
-                if (this.DdayInternal === 0) clearInterval(foo);
-            }, 3000);
         },
         components: {
         },
@@ -114,11 +123,14 @@
         },
         watch: {
             DdayInternal() {
-                this.$store.dispatch('setRating');
-                this.firstPlaceColor = this.partyColors[this.firstPlaceInternal.party];
-                this.secondPlaceColor = this.partyColors[this.secondPlaceInternal.party];
-                this.thirdPlaceColor = this.partyColors[this.thirdPlaceInternal.party];
-                this.fourthPlaceColor = this.partyColors[this.fourthPlaceInternal.party];
+                this.$store.dispatch('setRating')
+                    .then(() => {
+                        this.firstPlaceColor = this.partyColors[this.firstPlaceInternal.party];
+                        this.secondPlaceColor = this.partyColors[this.secondPlaceInternal.party];
+                        this.thirdPlaceColor = this.partyColors[this.thirdPlaceInternal.party];
+                        this.fourthPlaceColor = this.partyColors[this.fourthPlaceInternal.party];
+                    });
+                this.storeLoading = true;
             },
         },
         computed: {
@@ -126,85 +138,136 @@
                 return "D-" + (this.DdayInternal || 365);
             },
             ratings() {
-                return this.$store.getters.getTotalRatings || {};
+                return this.$store.getters.getTotalRatings;
             },
             sortedRatings() {
-                return this.makeSortedRatings(this.ratings) || Array(4);
+                return this.makeSortedRatings(this.ratings);
             },
             firstPlace() {
                 return this.firstPlaceInternal.party + " " + (this.firstPlaceInternal.rating || 0) + "%\n";
             },
             firstPlaceInternal() {
-                return {rating: this.sortedRatings[0].rating, party: Math.ceil(this.sortedRatings[0].candidate / 3), num: this.sortedRatings[0].candidate % 3};
+                return {rating: Math.round(this.sortedRatings[0].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[0].candidate / 3), num: this.sortedRatings[0].candidate % 3};
             },
             secondPlace() {
                 return this.secondPlaceInternal.party + " " + (this.secondPlaceInternal.rating || 0) + "%\n";
             },
             secondPlaceInternal() {
-                return {rating: this.sortedRatings[1].rating, party: Math.ceil(this.sortedRatings[1].candidate / 3), num: this.sortedRatings[1].candidate % 3}
+                return {rating: Math.round(this.sortedRatings[1].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[1].candidate / 3), num: this.sortedRatings[1].candidate % 3}
             },
             thirdPlace() {
                 return this.thirdPlaceInternal.party + " " + (this.thirdPlaceInternal.rating || 0) + "%\n";
             },
             thirdPlaceInternal() {
-                return {rating: this.sortedRatings[2].rating, party: Math.ceil(this.sortedRatings[2].candidate / 3), num: this.sortedRatings[2].candidate % 3}
+                return {rating: Math.round(this.sortedRatings[2].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[2].candidate / 3), num: this.sortedRatings[2].candidate % 3}
             },
             fourthPlace() {
                 return this.fourthPlaceInternal.party + " " + (this.fourthPlaceInternal.rating || 0) + "%\n";
             },
             fourthPlaceInternal() {
-                return {rating: this.sortedRatings[3].rating, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3}
+                return {rating: Math.round(this.sortedRatings[3].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3}
             },
             svgBusanColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Busan'))[0].candidate / 3)];
             },
             svgDaeguColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Daegu'))[0].candidate / 3)];
             },
             svgDaejeonColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Daejeon'))[0].candidate / 3)];
             },
             svgGangwonColor() {
-                return this.blue;
+                if (!this.storeLoading) {
+                    return this.blue;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Gangwon'))[0].candidate / 3)];
             },
             svgGwangjuColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Gwangju'))[0].candidate / 3)];
             },
             svgGyeonggiColor() {
-                return this.yellow;
+                if (!this.storeLoading) {
+                    return this.yellow;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Gyeonggi'))[0].candidate / 3)];
             },
             svgIncheonColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Incheon'))[0].candidate / 3)];
             },
             svgJejuColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Jeju'))[0].candidate / 3)];
             },
             svgNorthChungcheongColor() {
-                return this.green;
+                if (!this.storeLoading) {
+                    return this.green;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('NorthChungcheong'))[0].candidate / 3)];
             },
             svgNorthGyeongsangColor() {
-                return this.blue;
+                if (!this.storeLoading) {
+                    return this.blue;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('NorthGyeongsang'))[0].candidate / 3)];
             },
             svgNorthJeollaColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('NorthJeolla'))[0].candidate / 3)];
             },
             svgSejongColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Sejong'))[0].candidate / 3)];
             },
             svgSeoulColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Seoul'))[0].candidate / 3)];
             },
             svgSouthChungcheongColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('SouthChungcheong'))[0].candidate / 3)];
             },
             svgSouthGyeongsangColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('SouthGyeongsang'))[0].candidate / 3)];
             },
             svgSouthJeollaColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('SouthJeolla'))[0].candidate / 3)];
             },
             svgUlasnColor() {
-                return this.red;
+                if (!this.storeLoading) {
+                    return this.red;
+                }
+                return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Ulsan'))[0].candidate / 3)];
             },
             svgBusan(e) {
                 return this.pathOpen + this.svgFill + `"${this.svgBusanColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '부산')}"` + this.busan + this.pathClose;

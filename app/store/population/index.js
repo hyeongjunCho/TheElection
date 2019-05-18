@@ -5,7 +5,7 @@ import mutations from "./mutations";
 export default {
     state: {
         regions: {
-            // name: [
+            // name: {
                 // ratings: {
                 //     1: 0,
                 //     2: 0,
@@ -21,7 +21,7 @@ export default {
                 //     12: 0
                 // },
                 // electorates: [],
-            // ]
+            // }
         },
         regionBasicInfoes: [
             { name: 'Busan', num: 3441 }
@@ -34,7 +34,7 @@ export default {
             , { name: 'Jeju', num: 667 }
             , { name: 'NorthChungcheong', num: 1599 }
             , { name: 'NorthGyeongsang', num: 2677 }
-            , { name: 'NorthJelloa', num: 1837 }
+            , { name: 'NorthJeolla', num: 1837 }
             , { name: 'Sejong', num: 314 }
             , { name: 'Seoul', num: 9766 }
             , { name: 'SouthChungcheong', num: 2126 }
@@ -64,20 +64,20 @@ export default {
             },
         },
         ratings: {
-            1: 15.8,
-            2: 15.8,
-            3: 15.8,
-            4: 13.0,
-            5: 13.0,
-            6: 13.0,
-            7: 2.1,
-            8: 2.1,
-            9: 2.0,
-            10: 2.5,
-            11: 2.5,
-            12: 2.4
+            1: 0.158,
+            2: 0.158,
+            3: 0.158,
+            4: 0.130,
+            5: 0.130,
+            6: 0.130,
+            7: 0.021,
+            8: 0.021,
+            9: 0.020,
+            10: 0.025,
+            11: 0.025,
+            12: 0.024
         },
-        numOfEletorates: 51826,
+        numOfElectorates: 51826,
     },
     actions,
     mutations,
