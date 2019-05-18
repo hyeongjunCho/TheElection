@@ -35,13 +35,21 @@
                 screenWidth: Math.round(require("platform").screen.mainScreen.widthDIPs / 100) * 100,
                 loaded: false,
                 storeLoading: false,
+                htmlOpen: `
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body>
+`,
                 svgOpen: `
 <div>
 <div id="ratingOnCity" style="user-select:none;position:absolute;border:2px solid black;display:block;z-index:1;width:40%;height:25%;background-color:white;bottom:0;right:0;">
 <p id="activeCity" style="position:absolute;z-index:2;user-select:none;bottom:0;right:0;">
 </p>
 </div>
-<svg xmlns:mapsvg="http://mapsvg.com" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" mapsvg:geoViewBox="125.384480 38.612150 130.921968 33.194037" viewBox="0 0 524.23737 630.5871" width="97%" height="97%" style="position:absolute;margin:0;padding:0;filter:drop-shadow(6px 6px 3px gray);">
+<svg xmlns:mapsvg="http://mapsvg.com" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" mapsvg:geoViewBox="125.384480 38.612150 130.921968 33.194037" viewBox="0 0 524.23737 630.5871" width="95%" height="95%" style="position:absolute;margin:0;padding:0;filter:drop-shadow(6px 6px 3px gray);">
 `,
                 pathOpen: '<path ',
                 svgFill: ' fill=',
@@ -51,6 +59,7 @@
                 pathShadow: 'box-shadow:5px 5px 5px 5px;',
                 pathClose: '/>',
                 svgClose: '</svg></div>',
+                htmlClose: '</body></html>',
                 busan: 'd="m 362.20429,382.50884 0.04,0.76 3.97,0 1.34,1.34 0,0 1,1.68 -0.17,1.51 -0.9,0.32 -0.6,0.77 -0.37,1.02 0.26,1.67 -0.73,2.34 -0.87,-0.06 -0.1,0.93 -0.89,0.13 0.58,0.55 1.02,-0.35 0.31,1.63 -1.42,3.04 -0.63,-0.03 -0.34,-0.48 -0.6,1.41 0.79,1.38 -0.08,0.48 -0.45,0 -0.03,1.25 -0.5,0.26 -0.31,-0.45 -0.53,0.74 -1,0.13 -0.58,2.21 -0.76,0.16 -0.37,0.54 -1.65,-0.61 -0.6,0.1 -0.68,0.83 -1.65,-1.09 0.11,0.8 -1.63,0.22 -0.23,0.54 0.29,0.86 -0.66,0.67 1.02,0.16 0.52,1.5 -0.13,2.62 -1.18,-0.64 -0.71,0 -0.29,0.51 -0.92,-0.19 -0.1,-1.02 -0.21,0.64 -1.94,-0.26 0.21,-1.98 -0.71,-0.45 -0.58,0.8 -1.21,0.51 -0.31,0.57 0.24,0.38 -1.63,1.73 -0.21,1.79 -0.81,0.1 0.68,1.44 -0.71,1.15 -0.92,-2.04 -0.18,-1.53 -1.08,0.19 0.92,3.86 -0.34,0.54 -0.6,-0.13 -0.16,-1.47 -0.97,-0.35 -0.29,0.67 0.63,0.16 -0.13,0.83 -1.16,-0.13 0.69,0.93 -0.45,0 -0.73,0.83 0.1,-1.76 -0.73,-0.38 -0.81,-3.32 0.55,-3.03 -0.58,-0.06 -0.34,1.73 -1.15,0.77 -0.13,-1.18 0.47,-1.6 -0.42,-0.1 -0.68,2.01 -1.26,0.74 -0.03,0.86 -1.65,0 0.5,-3.8 0.53,-0.73 -1.05,-0.38 -0.97,4.92 -1.5,-0.51 -2.94,0 -1.5,-1.63 -0.24,0.7 -1.55,0.16 -1.15,1.31 -0.52,-0.06 -0.24,-0.83 0.76,-1.05 0.87,0.16 0.21,-0.64 -1.26,0.19 0.32,-2.32 0,0 0.2,-0.47 2.43,-1 4.3,-1.15 0.43,-5.01 2.29,-0.29 3.87,-2.43 4.15,-0.14 1.43,-1.57 0.86,-2 0.79,-0.2 0.98,-1.16 3.95,-2.48 1.84,0.32 1.03,-1.34 0.86,-2.72 1.72,-2.58 4.87,-0.57 0.57,-1.86 2.95,-2.71 0,0 0.24,0.27 z m -14.5,30.88 1.86,1.6 -0.29,1.63 1.94,1.63 -0.5,1.09 -0.89,0 -0.47,-1.18 -0.63,0.26 -0.5,-0.48 -0.08,-0.8 -1.31,-0.42 -1.81,-1.88 0.03,-0.48 0.81,-0.51 1.84,-0.46 z"',
                 daegu: 'd="m 298.06429,351.13884 -0.78,1 -0.8,3.59 -1.08,0.6 -2.42,-0.89 0,0 -1.53,0.37 0,0 -3.49,2.5 -2.41,0.06 0,0 -0.73,-3.43 -4.06,-4.99 0.31,-2.81 1.87,0.62 1.56,1.25 2.19,0 0.62,-2.49 -3.12,-3.44 1.25,-3.12 1.25,-2.81 5.3,-0.93 -0.31,-1.87 -2.81,-2.19 -4.68,-0.31 0.31,-3.12 1.25,-2.81 2.19,-3.12 2.18,-0.62 1.87,-1.25 0.63,5.61 2.49,0 0.94,-3.12 2.5,-4.99 5.92,-1.25 2.81,-3.12 3.43,-0.93 3.12,0.31 3.75,3.12 0,4.37 0.62,3.12 1.88,4.05 -0.94,2.19 -3.43,1.25 -1.56,3.43 0,3.12 -2.5,0.31 0,1.87 1.25,1.56 0,4.06 -3.43,1.25 -1.57,1.87 -2.8,-0.31 -0.63,-2.81 -3.12,0 -2.18,1.25 -1.56,2.5 z"',
                 daejeon: 'd="m 192.76429,261.00884 0.31,0.17 0,0 0.48,-0.09 0.98,-2.28 0,0 0.61,-0.64 0,0 1.39,0.18 -0.32,1.3 0,0 -0.07,0.64 0,0 0,0.26 2.86,-2.66 0,0 2.5,2.5 0,0 0.24,2.62 0.65,0.75 1.78,0.41 -0.32,1.63 0.77,0.21 1.25,2.18 -1.25,0.31 -1.56,1.56 0,0 -0.94,5.62 0,0 -1.25,6.24 1.17,3.75 0,0 -3.35,2.18 -2.18,2.81 -3.75,-2.19 -2.18,-3.74 0,-1.87 -0.63,-1.56 -1.56,0 0.32,3.12 -0.63,4.99 -0.93,2.19 -1.25,0 -0.94,-3.13 -2.5,-0.93 -1.56,-2.19 -0.31,-3.43 -2.18,-1.87 -0.31,-4.06 2.18,-2.49 -0.31,-8.74 0,0 2.52,-0.58 0,0 0.91,-0.04 3.43,-1.56 0.94,-2.81 0.33,-3.29 -0.31,-0.04 0,0 -0.23,-0.31 3.95,-0.42 z"',
@@ -100,8 +109,7 @@
             onWebviewLoadFinished(event) {
                 const webView = this.$refs.submap;
                 if(webView.android) { // in IOS android will be undefined
-                    webView.android.getSettings().setBuiltInZoomControls(true);
-                    webview.android.getSettings().setDisplayZoomControls(false);
+                    webView.android.getSettings().setBuiltInZoomControls(false);
                 }
                 this.loaded = true;
             },
@@ -309,7 +317,7 @@
                 return this.pathOpen + this.seoul + this.svgFill + `"${this.svgSeoulColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '서을')}"` + this.pathClose;
             },
             svgSouthChungcheong(e) {
-                return this.pathOpen + this.southChungcheong + this.svgFill + `"${this.svgSouthChungcheongColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '층남')}"` + this.pathClose;
+                return this.pathOpen + this.southChungcheong + this.svgFill + `"${this.svgSouthChungcheongColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '충남')}"` + this.pathClose;
             },
             svgSouthGyeongsang(e) {
                 return this.pathOpen + this.pathStyleOpen + '"border-bottom-width:10px;border-bottom-color:red;"' + this.pathStyleClose + this.southGyeongsang + this.svgFill + `"${this.svgSouthGyeongsangColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '경남')}"` + this.pathClose;
@@ -321,7 +329,7 @@
                 return this.pathOpen + this.ulsan + this.svgFill + `"${this.svgUlasnColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '울산')}"` + this.pathClose;
             },
             svgSouthKorea() {
-                return this.svgOpen + this.svgBusan + this.svgDaegu + this.svgDaejeon + this.svgGyeonggi + this.svgGangwon + this.svgGwangju + this.svgIncheon + this.svgJeju + this.svgNorthChungcheong + this.svgNorthGyeongsang + this.svgNorthJeolla + this.svgSejong + this.svgSeoul + this.svgSouthChungcheong + this.svgSouthGyeongsang + this.svgSouthJeolla + this.svgUlsan + this.svgClose;
+                return this.htmlOpen + this.svgOpen + this.svgBusan + this.svgDaegu + this.svgDaejeon + this.svgGyeonggi + this.svgGangwon + this.svgGwangju + this.svgIncheon + this.svgJeju + this.svgNorthChungcheong + this.svgNorthGyeongsang + this.svgNorthJeolla + this.svgSejong + this.svgSeoul + this.svgSouthChungcheong + this.svgSouthGyeongsang + this.svgSouthJeolla + this.svgUlsan + this.svgClose + this.htmlClose;
             },
         },
     };
