@@ -5,8 +5,9 @@ const getters = {
     getTotalRatings(state) {
         return state.ratings;
     },
-    getRegionRatings: (state) => (regionName) => {
-        return state.regions[regionName].ratings;
+    getRegionRatings: (state, getters) => (regionName) => {
+        if (getters.getRegions === 17) return state.regions[regionName].ratings;
+        return {};
     },
 };
 

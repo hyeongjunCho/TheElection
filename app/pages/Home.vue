@@ -1,22 +1,25 @@
 <template>
     <Page ref="page" class="page" actionBarHidden="true" width="100%" height="100%">
         <FixedAbsoluteLayout ref="pageLayout" class="pageLayout" backgroundColor="#ffffff" width="100%" height="100%">
-            <FixedAbsoluteLayout v-if="!loaded" ref="loading" class="loading" width="100%" height="100%" top="0" left="0">
-                <Label customLeft="35%" customTop="35%" width="30%" height="30%" />
+            <FixedAbsoluteLayout v-if="!storeLoading" ref="loading" class="loading" top="0" left="0" width="100%" height="100%">
+                <Label customLeft="35%" customTop="45%" width="30%" height="10%" text="Loading"/>
             </FixedAbsoluteLayout>
-            <Label class="Dday" :class="'width' + screenWidth" customTop="5%" customLeft="10%" v-model="Dday" />
-            <Label class="places" :class="'width' + screenWidth" textWrap="true" customTop="4.7%" customLeft="35%" width="65%" style="word-break:word;z-index:1;">
-                <FormattedString>
-                    <Span class="" :style="{color: this.firstPlaceColor}" v-model="firstPlace"/>
-                    <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
-                    <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
-                    <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
-                </FormattedString>
-            </Label>
-            <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" text="Rates" textWrap="true" />
-            <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" text="Status" textWrap="true" />
-            <FixedAbsoluteLayout class="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
-                <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
+            <FixedAbsoluteLayout v-if="storeLoading" top="0" left="0" width="100%" height="100%">
+                <Label class="Dday" :class="'width' + screenWidth" customTop="5%" customLeft="10%" v-model="Dday" />
+                <Label class="places" :class="'width' + screenWidth" textWrap="true" customTop="4.7%" customLeft="35%" width="65%" style="word-break:word;z-index:1;">
+                    <FormattedString>
+                        <Span class="" :style="{color: this.firstPlaceColor}" v-model="firstPlace"/>
+                        <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
+                        <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
+                        <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
+                        <Span v-model="activeCity" />
+                    </FormattedString>
+                </Label>
+                <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" text="Rates" textWrap="true" />
+                <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" text="Status" textWrap="true" />
+                <FixedAbsoluteLayout class="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
+                    <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
+                </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
         </FixedAbsoluteLayout>
     </Page>
@@ -26,6 +29,7 @@
     export default {
         data: () => {
             return {
+                activeCity: '',
                 DdayInternal: 366,
                 firstPlaceColor: '',
                 secondPlaceColor: '',
@@ -33,7 +37,6 @@
                 fourthPlaceColor: '',
                 partyColors: [],
                 screenWidth: Math.round(require("platform").screen.mainScreen.widthDIPs / 100) * 100,
-                loaded: false,
                 storeLoading: false,
                 htmlOpen: `
 <!doctype html>
@@ -107,14 +110,22 @@
         },
         methods: {
             onWebviewLoadFinished(event) {
-                const webView = this.$refs.submap;
-                if(webView.android) { // in IOS android will be undefined
-                    webView.android.getSettings().setBuiltInZoomControls(false);
-                }
-                this.loaded = true;
             },
-            mapOnClick(e, city) {
-                return `document.getElementById('activeCity').innerHTML='${city}';document.getElementById('ratingOnCity').style.display='block';`
+            regionRatings(city) {
+                if (!this.storeLoading) {
+                    return {};
+                }
+                return this.$store.getters.getRegionRatings(city);
+            },
+            changeActiveCity(city) {
+                this.activeCity = city;
+            },
+            mapOnClick(city) {
+                this.changeActiveCity(city);
+                if (this.storeLoading) {
+                    return `document.getElementById('activeCity').innerHTML='${this.makeSortedRatings(this.regionRatings(city))[0].rating}';`;
+                }
+                return `document.getElementById('activeCity').innerHTML='not loaded';`
             },
             makeSortedRatings(obj) {
                 let sortedArrayOfObject = [];
@@ -126,7 +137,7 @@
                 sortedArrayOfObject.sort((a, b) => {
                     return a.rating < b.rating ? 1 : -1;
                 });
-                return sortedArrayOfObject
+                return sortedArrayOfObject;
             },
         },
         watch: {
@@ -137,13 +148,29 @@
                         this.secondPlaceColor = this.partyColors[this.secondPlaceInternal.party];
                         this.thirdPlaceColor = this.partyColors[this.thirdPlaceInternal.party];
                         this.fourthPlaceColor = this.partyColors[this.fourthPlaceInternal.party];
+                        this.storeLoading = true;
                     });
-                this.storeLoading = true;
+            },
+            activeCity() {
+                this.svgOpen = `
+<div>
+<div id="ratingOnCity" style="user-select:none;position:absolute;border:2px solid black;display:block;z-index:1;width:40%;height:25%;background-color:white;bottom:0;right:0;">
+<p id="activeCity" style="position:absolute;z-index:2;user-select:none;bottom:0;right:0;">
+</p>
+<div id="activeCityFirstCandidateBar" style="position:absolute;top:10%;left:0;height:20%;width:${this.makeSortedRatings(this.regionRatings(this.activeCity))[0].rating * 100}%;background-color:${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(this.activeCity))[0].candidate / 3)]}">
+</div>
+<div id="activeCitySecondCandidateBar" style="position:absolute;top:40%;left:0;height:20%;width:${this.makeSortedRatings(this.regionRatings(this.activeCity))[1].rating * 100}%;background-color:${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(this.activeCity))[1].candidate / 3)]}">
+</div>
+<div id="activeCityThirdCandidateBar" style="position:absolute;top:70%;left:0;height:20%;width:${this.makeSortedRatings(this.regionRatings(this.activeCity))[2].rating * 100}%;background-color:${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(this.activeCity))[2].candidate / 3)]}">
+</div>
+</div>
+<svg xmlns:mapsvg="http://mapsvg.com" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" mapsvg:geoViewBox="125.384480 38.612150 130.921968 33.194037" viewBox="0 0 524.23737 630.5871" width="95%" height="95%" style="position:absolute;margin:0;padding:0;filter:drop-shadow(6px 6px 3px gray);">
+`
             },
         },
         computed: {
             Dday() {
-                return "D-" + (this.DdayInternal || 365);
+                return "D-" + (this.DdayInternal || 0);
             },
             ratings() {
                 return this.$store.getters.getTotalRatings;
@@ -277,56 +304,56 @@
                 }
                 return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Ulsan'))[0].candidate / 3)];
             },
-            svgBusan(e) {
-                return this.pathOpen + this.svgFill + `"${this.svgBusanColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '부산')}"` + this.busan + this.pathClose;
+            svgBusan() {
+                return this.pathOpen + this.svgFill + `"${this.svgBusanColor}"` + this.pathOnClick + `"${this.mapOnClick('Busan')}"` + this.busan + this.pathClose;
             },
-            svgDaegu(e) {
-                return this.pathOpen + this.daegu + this.svgFill + `"${this.svgDaeguColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '대구')}"` + this.pathClose;
+            svgDaegu() {
+                return this.pathOpen + this.daegu + this.svgFill + `"${this.svgDaeguColor}"` + this.pathOnClick + `"${this.mapOnClick('Daegu')}"` + this.pathClose;
             },
-            svgDaejeon(e) {
-                return this.pathOpen + this.daejeon + this.svgFill + `"${this.svgDaejeonColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '대전')}"` + this.pathClose;
+            svgDaejeon() {
+                return this.pathOpen + this.daejeon + this.svgFill + `"${this.svgDaejeonColor}"` + this.pathOnClick + `"${this.mapOnClick('Daejeon')}"` + this.pathClose;
             },
-            svgGangwon(e) {
-                return this.pathOpen + this.svgFill + `"${this.svgGangwonColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '강원')}"` + this.gangwon + this.pathClose;
+            svgGangwon() {
+                return this.pathOpen + this.svgFill + `"${this.svgGangwonColor}"` + this.pathOnClick + `"${this.mapOnClick('Gangwon')}"` + this.gangwon + this.pathClose;
             },
-            svgGwangju(e) {
-                return this.pathOpen + this.gwangju + this.svgFill + `"${this.svgGwangjuColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '광주')}"` + this.pathClose;
+            svgGwangju() {
+                return this.pathOpen + this.gwangju + this.svgFill + `"${this.svgGwangjuColor}"` + this.pathOnClick + `"${this.mapOnClick('Gwangju')}"` + this.pathClose;
             },
-            svgGyeonggi(e) {
-                return this.pathOpen + this.gyeonggi + this.svgFill + `"${this.svgGyeonggiColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '경기')}"` + this.pathClose;
+            svgGyeonggi() {
+                return this.pathOpen + this.gyeonggi + this.svgFill + `"${this.svgGyeonggiColor}"` + this.pathOnClick + `"${this.mapOnClick('Gyeonggi')}"` + this.pathClose;
             },
-            svgIncheon(e) {
-                return this.pathOpen + this.incheon + this.svgFill + `"${this.svgIncheonColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '인천')}"` + this.pathClose;
+            svgIncheon() {
+                return this.pathOpen + this.incheon + this.svgFill + `"${this.svgIncheonColor}"` + this.pathOnClick + `"${this.mapOnClick('Incheon')}"` + this.pathClose;
             },
-            svgJeju(e) {
-                return this.pathOpen + this.jeju + this.svgFill + `"${this.svgJejuColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '제주')}"` + this.pathClose;
+            svgJeju() {
+                return this.pathOpen + this.jeju + this.svgFill + `"${this.svgJejuColor}"` + this.pathOnClick + `"${this.mapOnClick('Jeju')}"` + this.pathClose;
             },
-            svgNorthChungcheong(e) {
-                return this.pathOpen + this.northChungcheong + this.svgFill + `"${this.svgNorthChungcheongColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '충북')}"` + this.pathClose;
+            svgNorthChungcheong() {
+                return this.pathOpen + this.northChungcheong + this.svgFill + `"${this.svgNorthChungcheongColor}"` + this.pathOnClick + `"${this.mapOnClick('NorthChungcheong')}"` + this.pathClose;
             },
-            svgNorthGyeongsang(e) {
-                return this.pathOpen + this.northGyeongsang + this.svgFill + `"${this.svgNorthGyeongsangColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '경북')}"` + this.pathClose;
+            svgNorthGyeongsang() {
+                return this.pathOpen + this.northGyeongsang + this.svgFill + `"${this.svgNorthGyeongsangColor}"` + this.pathOnClick + `"${this.mapOnClick('NorthGyeongsang')}"` + this.pathClose;
             },
-            svgNorthJeolla(e) {
-                return this.pathOpen + this.northJeolla + this.svgFill + `"${this.svgNorthJeollaColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '전북')}"` + this.pathClose;
+            svgNorthJeolla() {
+                return this.pathOpen + this.northJeolla + this.svgFill + `"${this.svgNorthJeollaColor}"` + this.pathOnClick + `"${this.mapOnClick('NorthJeolla')}"` + this.pathClose;
             },
-            svgSejong(e) {
-                return this.pathOpen + this.sejong + this.svgFill + `"${this.svgSejongColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '세종')}"` + this.pathClose;
+            svgSejong() {
+                return this.pathOpen + this.sejong + this.svgFill + `"${this.svgSejongColor}"` + this.pathOnClick + `"${this.mapOnClick('Sejong')}"` + this.pathClose;
             },
-            svgSeoul(e) {
-                return this.pathOpen + this.seoul + this.svgFill + `"${this.svgSeoulColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '서을')}"` + this.pathClose;
+            svgSeoul() {
+                return this.pathOpen + this.seoul + this.svgFill + `"${this.svgSeoulColor}"` + this.pathOnClick + `"${this.mapOnClick('Seoul')}"` + this.pathClose;
             },
-            svgSouthChungcheong(e) {
-                return this.pathOpen + this.southChungcheong + this.svgFill + `"${this.svgSouthChungcheongColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '충남')}"` + this.pathClose;
+            svgSouthChungcheong() {
+                return this.pathOpen + this.southChungcheong + this.svgFill + `"${this.svgSouthChungcheongColor}"` + this.pathOnClick + `"${this.mapOnClick('SouthChungcheong')}"` + this.pathClose;
             },
-            svgSouthGyeongsang(e) {
-                return this.pathOpen + this.pathStyleOpen + '"border-bottom-width:10px;border-bottom-color:red;"' + this.pathStyleClose + this.southGyeongsang + this.svgFill + `"${this.svgSouthGyeongsangColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '경남')}"` + this.pathClose;
+            svgSouthGyeongsang() {
+                return this.pathOpen + this.pathStyleOpen + '"border-bottom-width:10px;border-bottom-color:red;"' + this.pathStyleClose + this.southGyeongsang + this.svgFill + `"${this.svgSouthGyeongsangColor}"` + this.pathOnClick + `"${this.mapOnClick('SouthGyeongsang')}"` + this.pathClose;
             },
-            svgSouthJeolla(e) {
-                return this.pathOpen + this.southJeolla + this.svgFill + `"${this.svgSouthJeollaColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '전남')}"` + this.pathClose;
+            svgSouthJeolla() {
+                return this.pathOpen + this.southJeolla + this.svgFill + `"${this.svgSouthJeollaColor}"` + this.pathOnClick + `"${this.mapOnClick('SouthJeolla')}"` + this.pathClose;
             },
-            svgUlsan(e) {
-                return this.pathOpen + this.ulsan + this.svgFill + `"${this.svgUlasnColor}"` + this.pathOnClick + `"${this.mapOnClick(e, '울산')}"` + this.pathClose;
+            svgUlsan() {
+                return this.pathOpen + this.ulsan + this.svgFill + `"${this.svgUlasnColor}"` + this.pathOnClick + `"${this.mapOnClick('Ulsan')}"` + this.pathClose;
             },
             svgSouthKorea() {
                 return this.htmlOpen + this.svgOpen + this.svgBusan + this.svgDaegu + this.svgDaejeon + this.svgGyeonggi + this.svgGangwon + this.svgGwangju + this.svgIncheon + this.svgJeju + this.svgNorthChungcheong + this.svgNorthGyeongsang + this.svgNorthJeolla + this.svgSejong + this.svgSeoul + this.svgSouthChungcheong + this.svgSouthGyeongsang + this.svgSouthJeolla + this.svgUlsan + this.svgClose + this.htmlClose;
@@ -346,17 +373,15 @@
         user-drag: none;
     }
 
-    .pageLayout {
-        position: absolute;
-    }
-
     .loading {
         position: relative;
         z-index: 9999;
         background-color: rgb(220, 240, 148);
         Label {
             position: absolute;
-            background-color: red;
+            font-size: 20;
+            text-align: center;
+            color: black;
         }
     }
 
