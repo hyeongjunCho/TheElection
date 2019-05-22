@@ -12,7 +12,6 @@
                         <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
                         <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
                         <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
-                        <Span v-model="activeCity" />
                     </FormattedString>
                 </Label>
                 <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" text="Rates" textWrap="true" />
@@ -29,7 +28,6 @@
     export default {
         data: () => {
             return {
-                activeCity: '',
                 DdayInternal: 366,
                 firstPlaceColor: '',
                 secondPlaceColor: '',
@@ -49,8 +47,12 @@
                 svgOpen: `
 <div>
 <div id="ratingOnCity" style="user-select:none;position:absolute;border:2px solid black;display:block;z-index:1;width:40%;height:25%;background-color:white;bottom:0;right:0;">
-<p id="activeCity" style="position:absolute;z-index:2;user-select:none;bottom:0;right:0;">
-</p>
+<div id="activeCityFirstCandidateBar" style="position:absolute;top:10%;left:0;height:20%;width:0;">
+</div>
+<div id="activeCitySecondCandidateBar" style="position:absolute;top:40%;left:0;height:20%;width:0;">
+</div>
+<div id="activeCityThirdCandidateBar" style="position:absolute;top:70%;left:0;height:20%;width:0;">
+</div>
 </div>
 <svg xmlns:mapsvg="http://mapsvg.com" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" mapsvg:geoViewBox="125.384480 38.612150 130.921968 33.194037" viewBox="0 0 524.23737 630.5871" width="95%" height="95%" style="position:absolute;margin:0;padding:0;filter:drop-shadow(6px 6px 3px gray);">
 `,
@@ -117,13 +119,16 @@
                 }
                 return this.$store.getters.getRegionRatings(city);
             },
-            changeActiveCity(city) {
-                this.activeCity = city;
-            },
             mapOnClick(city) {
-                this.changeActiveCity(city);
                 if (this.storeLoading) {
-                    return `document.getElementById('activeCity').innerHTML='${this.makeSortedRatings(this.regionRatings(city))[0].rating}';`;
+                    return `
+document.getElementById('activeCityFirstCandidateBar').style.width='${this.makeSortedRatings(this.regionRatings(city))[0].rating * 100}%';
+document.getElementById('activeCityFirstCandidateBar').style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(city))[0].candidate / 3)]}';
+document.getElementById('activeCitySecondCandidateBar').style.width='${this.makeSortedRatings(this.regionRatings(city))[1].rating * 100}%';
+document.getElementById('activeCitySecondCandidateBar').style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(city))[1].candidate / 3)]}';
+document.getElementById('activeCityThirdCandidateBar').style.width='${this.makeSortedRatings(this.regionRatings(city))[2].rating * 100}%';
+document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(city))[2].candidate / 3)]}';
+`;
                 }
                 return `document.getElementById('activeCity').innerHTML='not loaded';`
             },
@@ -150,22 +155,6 @@
                         this.fourthPlaceColor = this.partyColors[this.fourthPlaceInternal.party];
                         this.storeLoading = true;
                     });
-            },
-            activeCity() {
-                this.svgOpen = `
-<div>
-<div id="ratingOnCity" style="user-select:none;position:absolute;border:2px solid black;display:block;z-index:1;width:40%;height:25%;background-color:white;bottom:0;right:0;">
-<p id="activeCity" style="position:absolute;z-index:2;user-select:none;bottom:0;right:0;">
-</p>
-<div id="activeCityFirstCandidateBar" style="position:absolute;top:10%;left:0;height:20%;width:${this.makeSortedRatings(this.regionRatings(this.activeCity))[0].rating * 100}%;background-color:${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(this.activeCity))[0].candidate / 3)]}">
-</div>
-<div id="activeCitySecondCandidateBar" style="position:absolute;top:40%;left:0;height:20%;width:${this.makeSortedRatings(this.regionRatings(this.activeCity))[1].rating * 100}%;background-color:${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(this.activeCity))[1].candidate / 3)]}">
-</div>
-<div id="activeCityThirdCandidateBar" style="position:absolute;top:70%;left:0;height:20%;width:${this.makeSortedRatings(this.regionRatings(this.activeCity))[2].rating * 100}%;background-color:${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(this.activeCity))[2].candidate / 3)]}">
-</div>
-</div>
-<svg xmlns:mapsvg="http://mapsvg.com" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" mapsvg:geoViewBox="125.384480 38.612150 130.921968 33.194037" viewBox="0 0 524.23737 630.5871" width="95%" height="95%" style="position:absolute;margin:0;padding:0;filter:drop-shadow(6px 6px 3px gray);">
-`
             },
         },
         computed: {

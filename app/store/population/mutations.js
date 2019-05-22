@@ -21,34 +21,35 @@ const mutations = {
             };
             for (let j = 0; j < regionBasicInfoes[i].num; j++) {
                 const electorate = JSON.parse(JSON.stringify(electorateTemplate));
-                const randomNum = Math.random() * 100;
-                if (randomNum < 15.8) {
+                const randomNum = Math.random();
+                if (randomNum < 0.158) {
                     electorate.supportingCandidate = 1;
-                } else if (randomNum < 31.6) {
+                } else if (randomNum < 0.316) {
                     electorate.supportingCandidate = 2;
-                } else if (randomNum < 47.4) {
+                } else if (randomNum < 0.474) {
                     electorate.supportingCandidate = 3;
-                } else if (randomNum < 60.4) {
+                } else if (randomNum < 0.604) {
                     electorate.supportingCandidate = 4;
-                } else if (randomNum < 73.4) {
+                } else if (randomNum < 0.734) {
                     electorate.supportingCandidate = 5;
-                } else if (randomNum < 86.4) {
+                } else if (randomNum < 0.864) {
                     electorate.supportingCandidate = 6;
-                } else if (randomNum < 88.5) {
+                } else if (randomNum < 0.885) {
                     electorate.supportingCandidate = 7;
-                } else if (randomNum < 90.6) {
+                } else if (randomNum < 0.906) {
                     electorate.supportingCandidate = 8;
-                } else if (randomNum < 92.6) {
+                } else if (randomNum < 0.926) {
                     electorate.supportingCandidate = 9;
-                } else if (randomNum < 95.1) {
+                } else if (randomNum < 0.951) {
                     electorate.supportingCandidate = 10;
-                } else if (randomNum < 97.6) {
+                } else if (randomNum < 0.976) {
                     electorate.supportingCandidate = 11;
-                } else if (randomNum < 100) {
+                } else if (randomNum < 1) {
                     electorate.supportingCandidate = 12;
                 }
                 electorate.region = regionBasicInfoes[i].name;
                 regions[regionBasicInfoes[i].name].electorates.push(electorate);
+                state.electorates.push(electorate);
             }
         }
     },
