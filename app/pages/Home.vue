@@ -4,7 +4,10 @@
             <FixedAbsoluteLayout v-if="!storeLoading" ref="loading" class="loading" top="0" left="0" width="100%" height="100%">
                 <Label customLeft="35%" customTop="45%" width="30%" height="10%" text="Loading"/>
             </FixedAbsoluteLayout>
-            <FixedAbsoluteLayout v-if="storeLoading" top="0" left="0" width="100%" height="100%">
+            <FixedAbsoluteLayout v-if="storeLoading && !finishInitialStage" top="0" left="0" width="100%" height="100%">
+                <Button @tap="onFinishInitialStage" customTop="37.5%" customLeft="30%" width="40%" height="15%" text="Start" textWrap="true" />
+            </FixedAbsoluteLayout>
+            <FixedAbsoluteLayout v-if="storeLoading && finishInitialStage" top="0" left="0" width="100%" height="100%">
                 <Label class="Dday" :class="'width' + screenWidth" customTop="5%" customLeft="10%" v-model="Dday" />
                 <Label class="places" :class="'width' + screenWidth" textWrap="true" customTop="4.7%" customLeft="35%" width="65%" style="word-break:word;z-index:1;">
                     <FormattedString>
@@ -14,8 +17,8 @@
                         <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
                     </FormattedString>
                 </Label>
-                <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" text="Rates" textWrap="true" />
-                <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" text="Status" textWrap="true" />
+                <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
+                <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" width="20%" height="6%" text="Status" textWrap="true" />
                 <FixedAbsoluteLayout class="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
                     <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
                 </FixedAbsoluteLayout>
@@ -36,6 +39,7 @@
                 partyColors: [],
                 screenWidth: Math.round(require("platform").screen.mainScreen.widthDIPs / 100) * 100,
                 storeLoading: false,
+                finishInitialStage: false,
                 htmlOpen: `
 <!doctype html>
 <html>
@@ -95,12 +99,6 @@
                     const temp = setInterval(() => {
                         if (this.$store.getters.getRegions === 17) {
                             this.DdayInternal--;
-                            const foo = setInterval(() => {
-                                if (this.DdayInternal < 366) {
-                                    this.DdayInternal--;
-                                }
-                                if (this.DdayInternal === 0) clearInterval(foo);
-                            }, 3000);
                             clearInterval(temp);
                         }
                     }, 1000);
@@ -111,6 +109,15 @@
         components: {
         },
         methods: {
+            onFinishInitialStage() {
+                const foo = setInterval(() => {
+                    if (this.DdayInternal < 366) {
+                        this.DdayInternal--;
+                    }
+                    if (this.DdayInternal === 0) clearInterval(foo);
+                }, 3000);
+                this.finishInitialStage = true;
+            },
             onWebviewLoadFinished(event) {
             },
             regionRatings(city) {
@@ -500,8 +507,6 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
     .info {
         position: relative;
         background-color: #ffffff;
-        width: 20%;
-        height: 6%;
         padding: 0;
         color: black;
         border-width: 1 1 1 1;
