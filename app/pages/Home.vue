@@ -20,7 +20,14 @@
                 <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
                 <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" width="20%" height="6%" text="Status" textWrap="true" />
                 <FixedAbsoluteLayout class="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
-                    <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
+                    <FixedAbsoluteLayout v-if="poppingEvent" class="event" customLeft="0%" customTop="0%" width="100%" height="100%">
+                        <Label class="eventNum" customLeft="5%" customTop="5%" v-model="eventNum" />
+                        <Label class="eventDescription" customLeft="5%" customTop="15%" v-model="eventDescription" />
+                        <FlexboxLayout class="eventChoices" customTop="45%" customLeft="5%" width="90%" height="50%">
+                            <Button class="eventChoice" v-for="(choice, index) in choices" :key="index" @tap="() => selectChocies(index)" v-model="choices[index]"/>
+                        </FlexboxLayout>
+                    </FixedAbsoluteLayout>
+                    <Webview v-show="!poppingEvent" ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
                 </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
         </FixedAbsoluteLayout>
@@ -31,6 +38,10 @@
     export default {
         data: () => {
             return {
+                poppingEvent: false,
+                eventNumInternal: 0,
+                eventDescription: '',
+                choices: [],
                 DdayInternal: 366,
                 firstPlaceColor: '',
                 secondPlaceColor: '',
@@ -151,6 +162,9 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 });
                 return sortedArrayOfObject;
             },
+            selectChocies(index) {
+                this.poppingEvent = false;
+            },
         },
         watch: {
             DdayInternal() {
@@ -162,11 +176,26 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                         this.fourthPlaceColor = this.partyColors[this.fourthPlaceInternal.party];
                         this.storeLoading = true;
                     });
+                if (this.DdayInternal % 7 === 0) {
+                    this.eventNumInternal++;
+                    this.eventDescription = 'a' * this.eventNumInternal;
+                    if (Math.random() < 0.5) {
+                        this.choices = ['aa', 'bb'];
+                    } else {
+                        this.choices = ['cc', 'dd', 'ee'];
+                    }
+                    this.poppingEvent = true;
+                } else if (this.DdayInternal % 7 === 2) {
+                    this.poppingEvent = false;
+                }
             },
         },
         computed: {
             Dday() {
                 return "D-" + (this.DdayInternal || 0);
+            },
+            eventNum() {
+                return "Event " + this.eventNumInternal;
             },
             ratings() {
                 return this.$store.getters.getTotalRatings;
@@ -580,5 +609,20 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             padding: 0;
             position: relative;
         }
+    }
+
+    .event {
+        z-index: 1;
+        .eventChoices {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            .eventChoice {
+                margin-right: 2;
+            }
+        }
+        border-width: 2 2 2 2;
+        border-radius: 20;
     }
 </style>
