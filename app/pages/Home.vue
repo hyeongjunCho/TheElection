@@ -168,14 +168,17 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         },
         watch: {
             DdayInternal() {
-                this.$store.dispatch('setRating')
+                this.$store.dispatch('resetSupportingCandidate')
                     .then(() => {
-                        this.firstPlaceColor = this.partyColors[this.firstPlaceInternal.party];
-                        this.secondPlaceColor = this.partyColors[this.secondPlaceInternal.party];
-                        this.thirdPlaceColor = this.partyColors[this.thirdPlaceInternal.party];
-                        this.fourthPlaceColor = this.partyColors[this.fourthPlaceInternal.party];
-                        this.storeLoading = true;
-                    });
+                        this.$store.dispatch('setRating')
+                            .then(() => {
+                                this.firstPlaceColor = this.partyColors[this.firstPlaceInternal.party];
+                                this.secondPlaceColor = this.partyColors[this.secondPlaceInternal.party];
+                                this.thirdPlaceColor = this.partyColors[this.thirdPlaceInternal.party];
+                                this.fourthPlaceColor = this.partyColors[this.fourthPlaceInternal.party];
+                                this.storeLoading = true;
+                            });
+                    })
                 if (this.DdayInternal % 7 === 0) {
                     this.eventNumInternal++;
                     this.eventDescription = 'a' * this.eventNumInternal;

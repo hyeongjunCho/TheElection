@@ -48,6 +48,13 @@ const mutations = {
                     electorate.supportingCandidate = 12;
                 }
                 electorate.region = regionBasicInfoes[i].name;
+                for (let k = 1; k < 13; k++) {
+                    if (k === electorate.supportingCandidate) {
+                        electorate.goto[k] = 1 - 0.03 * 11;
+                    } else {
+                        electorate.goto[k] = 0.03;
+                    }
+                }
                 regions[regionBasicInfoes[i].name].electorates.push(electorate);
                 state.electorates.push(electorate);
             }
@@ -94,6 +101,30 @@ const mutations = {
         }
         for (let i = 1; i < 13; i++) {
             state.ratings[i] = totalRatings[i] / state.numOfElectorates;
+        }
+    },
+    resetSupportingCandidate: function(state) {
+        for (let i = 0; i < state.electorates.length; i++) {
+            const randomNum = Math.random();
+            
+            
+            let totalDistribution = 0;
+            for (let j = 1; j < 13; j++) {
+                totalDistribution += state.electorates[i].goto[j];
+                if (j === state.electorates[i].supportingCandidate) {
+                    break;
+                }
+                if (randomNum < totalDistribution) {
+                    state.electorates[i].supportingCandidate = j;
+                    for (let k = 1; k < 13; k++) {
+                        state.electorates[i].goto[k] = state.ratings[k] * state.totalProbabilityGoto;
+                    }
+                    state.electorates[i].goto[j] = 1 - (1 - state.ratings[j]) * state.totalProbabilityGoto;
+                    break;
+                }
+            }
+
+
         }
     },
 };

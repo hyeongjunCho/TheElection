@@ -20,11 +20,8 @@ export default {
         candidateTemplate: {
             status: {
                 capitalist: 0,
-                socialist: 0,
                 communitarian: 0,
-                liberalist: 0,
                 authoritative: 0,
-                democratic: 0,
             },
             traits: [],
         },

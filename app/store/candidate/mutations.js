@@ -6,6 +6,9 @@ const mutations = {
             //
             // set status value
             //
+            candidate.status.capitalist = Math.random() * 100;
+            candidate.status.communitarian = Math.random() * 100;
+            candidate.status.authoritative = Math.random() * 100;
             candidates[i] = candidate;
         }
     },
