@@ -1,6 +1,47 @@
 const mutations = {
     initializeRegions: function (state) {
-        const { regionBasicInfoes, electorateTemplate, regions } = state;
+        const { regionBasicInfoes, electorateTemplate, regions, ages, classes, electorates } = state;
+        
+        for (let age = 20; age <= 70; age += 10) {
+            ages[age] = {
+                ratings: {
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    6: 0,
+                    7: 0,
+                    8: 0,
+                    9: 0,
+                    10: 0,
+                    11: 0,
+                    12: 0,
+                },
+                electorates: [],
+            };
+        }
+
+        for (let c = 0; c < 3; c++) {
+            classes[c] = {
+                ratings: {
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    6: 0,
+                    7: 0,
+                    8: 0,
+                    9: 0,
+                    10: 0,
+                    11: 0,
+                    12: 0,
+                },
+                electorates: [],
+            };
+        }
+
         for (let i = 0; i < regionBasicInfoes.length; i++) {
             regions[regionBasicInfoes[i].name] = {
                 ratings: {
@@ -21,32 +62,10 @@ const mutations = {
             };
             for (let j = 0; j < regionBasicInfoes[i].num; j++) {
                 const electorate = JSON.parse(JSON.stringify(electorateTemplate));
-                const randomNum = Math.random();
-                if (randomNum < 0.158) {
-                    electorate.supportingCandidate = 1;
-                } else if (randomNum < 0.316) {
-                    electorate.supportingCandidate = 2;
-                } else if (randomNum < 0.474) {
-                    electorate.supportingCandidate = 3;
-                } else if (randomNum < 0.604) {
-                    electorate.supportingCandidate = 4;
-                } else if (randomNum < 0.734) {
-                    electorate.supportingCandidate = 5;
-                } else if (randomNum < 0.864) {
-                    electorate.supportingCandidate = 6;
-                } else if (randomNum < 0.885) {
-                    electorate.supportingCandidate = 7;
-                } else if (randomNum < 0.906) {
-                    electorate.supportingCandidate = 8;
-                } else if (randomNum < 0.926) {
-                    electorate.supportingCandidate = 9;
-                } else if (randomNum < 0.951) {
-                    electorate.supportingCandidate = 10;
-                } else if (randomNum < 0.976) {
-                    electorate.supportingCandidate = 11;
-                } else if (randomNum < 1) {
-                    electorate.supportingCandidate = 12;
-                }
+                electorate.supportingCandidate = randomlySet(state.ratings);
+                electorate.age = randomlySet(regionBasicInfoes[i].age);
+                electorate.class = randomlySet(regionBasicInfoes[i].class);
+                electorate.politicaclEngagement = randomlySet({ 0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25 });
                 electorate.region = regionBasicInfoes[i].name;
                 for (let k = 1; k < 13; k++) {
                     if (k === electorate.supportingCandidate) {
@@ -55,8 +74,10 @@ const mutations = {
                         electorate.goto[k] = 0.03;
                     }
                 }
-                regions[regionBasicInfoes[i].name].electorates.push(electorate);
-                state.electorates.push(electorate);
+                regions[electorate.region].electorates.push(electorate);
+                ages[electorate.age].electorates.push(electorate);
+                classes[electorate.class].electorates.push(electorate);
+                electorates.push(electorate);
             }
         }
     },
@@ -128,5 +149,17 @@ const mutations = {
         }
     },
 };
+
+const randomlySet = function (probabilities) {
+    const randomNum = Math.random();
+    let agg = 0;
+    let key;
+    for (key in probabilities) {
+        agg += probabilities[key];
+        if (randomNum < agg)
+            break;
+    }
+    return key
+}
 
 export default mutations;
