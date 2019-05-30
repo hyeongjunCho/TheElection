@@ -3,12 +3,15 @@ const mutations = {
         const { candidates, candidateTemplate } = state;
         for (let i = 1; i < 13; i++) {
             const candidate = JSON.parse(JSON.stringify(candidateTemplate));
-            //
-            // set status value
-            //
+            candidate.capCom = randomValue();
+            candidate.libCons = randomValue();
             candidates[i] = candidate;
         }
     },
+};
+
+const randomValue = function () {
+    return Math.floor(Math.random() * 11) - 5;
 };
 
 export default mutations;

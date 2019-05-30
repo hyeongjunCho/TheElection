@@ -74,6 +74,13 @@ const mutations = {
             }
         }
     },
+    setPoliticalOrientation: function (state) {
+        const { electorates } = state;
+
+        for (let i = 0; i < electorates.length; i++) {
+            
+        }
+    },
     setRating: function (state) {
         const totalRatings = {
             1: 0,
