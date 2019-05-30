@@ -96,7 +96,7 @@ const mutations = {
             }
             for (let j = 1; j < 13; j++) {
                 totalRatings[j] += ratings[j];
-                region.ratings[j] = ratings[j] / state.regionBasicInfoes[i].num
+                region.ratings[j] = ratings[j] / state.regionBasicInfoes[i].num;
             }
         }
         for (let i = 1; i < 13; i++) {
