@@ -140,29 +140,29 @@
                 this.finishInitialStage = true;
             },
             onWebviewLoadFinished(event) {
-                const document = this.$refs.submap.android.domNode;
-                setInterval(function() {
-                    var pathes = Array.from(document.getElementsByTagName('path'));
-                    var first = document.getElementById('activeCityFirstCandidateBar');
-                    var second = document.getElementById('activeCitySecondCandidateBar');
-                    var third = document.getElementById('activeCityThirdCandidateBar');
-                    var newFirst = first.cloneNode(true);
-                    var newSecond = second.cloneNode(true);
-                    var newThird = third.cloneNode(true);
-                    first.parentNode.replaceChild(newFirst, first);
-                    second.parentNode.replaceChild(newSecond, second);
-                    third.parentNode.replaceChild(newThird, third);
-                    for (var i = 0; i < pathes.length; i++) {
-                        pathes[i].addEventListener("click", function() {
-                            newFirst.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[0].rating * 100}%';
-                            newFirst.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[0].candidate / 3)]}';
-                            newSecond.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[1].rating * 100}%';
-                            newSecond.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[1].candidate / 3)]}';
-                            newThird.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[2].rating * 100}%';
-                            newThird.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[2].candidate / 3)]}';
-                        }, false);
-                    }
-                }, 3000);
+                // const document = this.$refs.submap.android.domNode;
+                // setInterval(function() {
+                //     var pathes = Array.from(document.getElementsByTagName('path'));
+                //     var first = document.getElementById('activeCityFirstCandidateBar');
+                //     var second = document.getElementById('activeCitySecondCandidateBar');
+                //     var third = document.getElementById('activeCityThirdCandidateBar');
+                //     var newFirst = first.cloneNode(true);
+                //     var newSecond = second.cloneNode(true);
+                //     var newThird = third.cloneNode(true);
+                //     first.parentNode.replaceChild(newFirst, first);
+                //     second.parentNode.replaceChild(newSecond, second);
+                //     third.parentNode.replaceChild(newThird, third);
+                //     for (var i = 0; i < pathes.length; i++) {
+                //         pathes[i].addEventListener("click", function() {
+                //             newFirst.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[0].rating * 100}%';
+                //             newFirst.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[0].candidate / 3)]}';
+                //             newSecond.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[1].rating * 100}%';
+                //             newSecond.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[1].candidate / 3)]}';
+                //             newThird.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[2].rating * 100}%';
+                //             newThird.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[2].candidate / 3)]}';
+                //         }, false);
+                //     }
+                // }, 3000);
             },
             regionRatings(city) {
                 if (!this.storeLoading) {
