@@ -18,11 +18,8 @@ export default {
             // }
         },
         candidateTemplate: {
-            status: {
-                capitalist: 0,
-                communitarian: 0,
-                authoritative: 0,
-            },
+            capCom: 0,  // capitalist-communist value, -5 ~ +5
+            libCons: 0, // liberal-conservative value, -5 ~ +5
             traits: [],
         },
         activeCandidates: {

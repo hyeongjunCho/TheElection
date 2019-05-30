@@ -358,6 +358,8 @@ export default {
             age: 0,
             class: 0, // 0 ~ 2
             politicalEngagement: 0, // 0 ~ 4
+            capCom: 0,
+            libCons: 0,
             supportingCandidate: 1,
             goto: {
                 1: 0,

@@ -1,6 +1,12 @@
 const actions = {
-    initializeRegions(context) {
-        context.commit('initializeRegions');
+    initializeElectorates(context) {
+        context.commit('initializeElectorates');
+    },
+    setPoliticalOrientation(context) {
+        context.commit('setPoliticalOrientation');
+    },
+    initializeRating(context) {
+        context.commit('initializeRating', {candidates: context.rootState.candidate.candidates});
     },
     setRating(context) {
         context.commit('setRating');
