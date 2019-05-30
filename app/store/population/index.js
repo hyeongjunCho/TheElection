@@ -391,6 +391,7 @@ export default {
             12: 0.024
         },
         numOfElectorates: 51826,
+        totalProbabilityGoto: 0.01,
     },
     actions,
     mutations,
