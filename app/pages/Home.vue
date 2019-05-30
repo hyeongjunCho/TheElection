@@ -108,15 +108,22 @@
         },
         created() {
             this.partyColors = [null, this.blue, this.red, this.green, this.yellow];
-            this.$store.dispatch('initializeRegions')
+            this.$store.dispatch('initializeCandidates')
+            this.$store.dispatch('initializeElectorates')
                 .then(() => {
-                    const temp = setInterval(() => {
-                        if (this.$store.getters.getRegions === 17) {
-                            this.DdayInternal--;
-                            clearInterval(temp);
-                        }
-                    }, 1000);
-                });
+                    this.$store.dispatch('setPoliticalOrientation')
+                        .then(() => {
+                            this.$store.dispatch('initializeRating')
+                                .then(() => {
+                                const temp = setInterval(() => {
+                                    if (this.$store.getters.getRegions === 17) {
+                                        this.DdayInternal--;
+                                        clearInterval(temp);
+                                    }
+                                }, 1000);
+                                 });
+                        });
+                }); 
         },
         mounted() {
         },

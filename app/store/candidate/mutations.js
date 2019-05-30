@@ -11,7 +11,7 @@ const mutations = {
 };
 
 const randomValue = function () {
-    return Math.floor(Math.random() * 11) - 5;
+    return Math.random() * 11 - 5;
 };
 
 export default mutations;
