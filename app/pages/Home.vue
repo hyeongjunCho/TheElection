@@ -15,6 +15,7 @@
                         <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
                         <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
                         <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
+                        <Span class=""  v-model="candidate1"/>
                     </FormattedString>
                 </Label>
                 <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
@@ -109,21 +110,24 @@
         created() {
             this.partyColors = [null, this.blue, this.red, this.green, this.yellow];
             this.$store.dispatch('initializeCandidates')
-            this.$store.dispatch('initializeElectorates')
                 .then(() => {
-                    this.$store.dispatch('setPoliticalOrientation')
+                    this.$store.dispatch('initializeElectorates')
                         .then(() => {
-                            this.$store.dispatch('initializeRating')
+                            this.$store.dispatch('setPoliticalOrientation')
                                 .then(() => {
-                                const temp = setInterval(() => {
-                                    if (this.$store.getters.getRegions === 17) {
-                                        this.DdayInternal--;
-                                        clearInterval(temp);
-                                    }
-                                }, 1000);
-                                 });
-                        });
-                }); 
+                                    this.$store.dispatch('initializeRating')
+                                        .then(() => {
+                                        const temp = setInterval(() => {
+                                            if (this.$store.getters.getRegions === 17) {
+                                                this.DdayInternal--;
+                                                clearInterval(temp);
+                                            }
+                                        }, 1000);
+                                        });
+                                });
+                        }); 
+                });
+            
         },
         mounted() {
         },
@@ -227,6 +231,9 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             },
         },
         computed: {
+            candidate1() {
+                return this.$store.getters.getCandidate1.capCom;
+            },
             Dday() {
                 return "D-" + (this.DdayInternal || 0);
             },
@@ -240,28 +247,28 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 return this.makeSortedRatings(this.ratings);
             },
             firstPlace() {
-                return this.firstPlaceInternal.party + " " + (this.firstPlaceInternal.rating || 0) + "%\n";
+                return this.firstPlaceInternal.party + " " + (this.firstPlaceInternal.rating || 0) + "% " + (this.firstPlaceInternal.num) + "\n";
             },
             firstPlaceInternal() {
-                return {rating: Math.round(this.sortedRatings[0].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[0].candidate / 3), num: this.sortedRatings[0].candidate % 3};
+                return {rating: Math.round(this.sortedRatings[0].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[0].candidate / 3), num: this.sortedRatings[0].candidate % 3 || 3};
             },
             secondPlace() {
-                return this.secondPlaceInternal.party + " " + (this.secondPlaceInternal.rating || 0) + "%\n";
+                return this.secondPlaceInternal.party + " " + (this.secondPlaceInternal.rating || 0) + "% " + (this.secondPlaceInternal.num) + "\n";
             },
             secondPlaceInternal() {
-                return {rating: Math.round(this.sortedRatings[1].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[1].candidate / 3), num: this.sortedRatings[1].candidate % 3}
+                return {rating: Math.round(this.sortedRatings[1].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[1].candidate / 3), num: this.sortedRatings[1].candidate % 3 || 3}
             },
             thirdPlace() {
-                return this.thirdPlaceInternal.party + " " + (this.thirdPlaceInternal.rating || 0) + "%\n";
+                return this.thirdPlaceInternal.party + " " + (this.thirdPlaceInternal.rating || 0) + "% " + (this.thirdPlaceInternal.num) + "\n";
             },
             thirdPlaceInternal() {
-                return {rating: Math.round(this.sortedRatings[2].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[2].candidate / 3), num: this.sortedRatings[2].candidate % 3}
+                return {rating: Math.round(this.sortedRatings[2].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[2].candidate / 3), num: this.sortedRatings[2].candidate % 3 || 3}
             },
             fourthPlace() {
-                return this.fourthPlaceInternal.party + " " + (this.fourthPlaceInternal.rating || 0) + "%\n";
+                return this.fourthPlaceInternal.party + " " + (this.fourthPlaceInternal.rating || 0) + "% " + (this.fourthPlaceInternal.num) + "\n";
             },
             fourthPlaceInternal() {
-                return {rating: Math.round(this.sortedRatings[3].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3}
+                return {rating: Math.round(this.sortedRatings[3].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3 || 3}
             },
             svgBusanColor() {
                 if (!this.storeLoading) {

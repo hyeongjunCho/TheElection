@@ -221,11 +221,11 @@ const mutations = {
 
         let minDistance = 1000;
         for (let i = 0; i < electorates.length; i++) {
-            for (let key in candidates) {
-                let candidate = candidates[key];
+            for (const key in candidates) {
+                const candidate = candidates[key];
                 let currentDistance = distance(electorates[i].capCom, electorates[i].libCons, candidate.capCom, candidate.libCons);
                 electorates[i].goto[key] = 0.03;
-                if (currentDistance < minDistance) {
+                if (currentDistance <= minDistance) {
                     minDistance = currentDistance;
                     electorates[i].supportingCandidate = key;
                 }
