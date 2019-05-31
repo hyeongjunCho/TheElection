@@ -9,6 +9,9 @@ const getters = {
         if (getters.getRegions === 17) return state.regions[regionName].ratings;
         return {};
     },
+    getSingleElectorate(state) {
+        return state.electorates[0];
+    },
 };
 
 export default getters;

@@ -219,8 +219,8 @@ const mutations = {
         const { electorates } = state;
         const { candidates } = payload;
 
-        let minDistance = 1000;
         for (let i = 0; i < electorates.length; i++) {
+            let minDistance = 100000000;
             for (const key in candidates) {
                 const candidate = candidates[key];
                 let currentDistance = distance(electorates[i].capCom, electorates[i].libCons, candidate.capCom, candidate.libCons);
@@ -248,30 +248,45 @@ const mutations = {
             11: 0,
             12: 0,
         };
+        const ratingsByRegion = {
+        };
         for (let i = 0; i < state.regionBasicInfoes.length; i++) {
-            const region = state.regions[state.regionBasicInfoes[i].name];
-            const ratings = {
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0,
-                5: 0,
-                6: 0,
-                7: 0,
-                8: 0,
-                9: 0,
-                10: 0,
-                11: 0,
-                12: 0,
-            };
-            for (let j = 0; j < region.electorates.length; j++) {
-                ratings[region.electorates[j].supportingCandidate]++;
-            }
+            ratingsByRegion[state.regionBasicInfoes[i].name] = JSON.parse(JSON.stringify(totalRatings));
+        }
+        for (let i = 0; i < state.electorates.length; i++) {
+            ratingsByRegion[state.electorates[i].region][state.electorates[i].supportingCandidate]++;
+            totalRatings[state.electorates[i].supportingCandidate]++;
+        }
+        for (let i = 0; i < state.regionBasicInfoes.length; i++) {
             for (let j = 1; j < 13; j++) {
-                totalRatings[j] += ratings[j];
-                region.ratings[j] = ratings[j] / state.regionBasicInfoes[i].num;
+                ratingsByRegion[state.regionBasicInfoes[i].name][j] /= state.regionBasicInfoes[i].num;
+                state.regions[state.regionBasicInfoes[i].name].ratings = JSON.parse(JSON.stringify(ratingsByRegion[state.regionBasicInfoes[i].name]));
             }
         }
+        // for (let i = 0; i < state.regionBasicInfoes.length; i++) {
+        //     const region = state.regions[state.regionBasicInfoes[i].name];
+        //     const ratings = {
+        //         1: 0,
+        //         2: 0,
+        //         3: 0,
+        //         4: 0,
+        //         5: 0,
+        //         6: 0,
+        //         7: 0,
+        //         8: 0,
+        //         9: 0,
+        //         10: 0,
+        //         11: 0,
+        //         12: 0,
+        //     };
+        //     for (let j = 0; j < region.electorates.length; j++) {
+        //         ratings[region.electorates[j].supportingCandidate]++;
+        //     }
+        //     for (let j = 1; j < 13; j++) {
+        //         totalRatings[j] += ratings[j];
+        //         region.ratings[j] = ratings[j] / state.regionBasicInfoes[i].num;
+        //     }
+        // }
         for (let i = 1; i < 13; i++) {
             state.ratings[i] = totalRatings[i] / state.numOfElectorates;
         }
@@ -325,6 +340,6 @@ const normalRandom = function (mean, variance) {
 
 const distance = function (a1, a2, b1, b2) {
     return Math.pow((a1 - b1), 2) + Math.pow((a2 - b2), 2);
-}
+};
 
 export default mutations;
