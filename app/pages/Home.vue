@@ -15,12 +15,11 @@
                         <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
                         <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
                         <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
-                        <!-- <Span class=""  v-model="electorate1"/> -->
                     </FormattedString>
                 </Label>
                 <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
                 <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" width="20%" height="6%" text="Status" textWrap="true" />
-                <FixedAbsoluteLayout class="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
+                <FixedAbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
                     <FixedAbsoluteLayout v-if="poppingEvent" class="event" customLeft="0%" customTop="0%" width="100%" height="100%">
                         <Label class="eventNum" customLeft="5%" customTop="5%" v-model="eventNum" />
                         <Label class="eventDescription" customLeft="5%" customTop="15%" v-model="eventDescription" />
@@ -28,7 +27,11 @@
                             <Button class="eventChoice" v-for="(choice, index) in choices" :key="index" @tap="() => selectChocies(index)" v-model="choices[index]"/>
                         </FlexboxLayout>
                     </FixedAbsoluteLayout>
-                    <Webview v-show="!poppingEvent" ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
+                    <FixedAbsoluteLayout v-show="!poppingEvent" id="nonEvent" customLeft="0%" customTop="0%" width="100%" height="100%">
+                        <FixedAbsoluteLayout id="nonSubmap" customLeft="0%" customTop="0%" width="100%" height="100%">
+                        </FixedAbsoluteLayout>                    
+                        <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
+                    </FixedAbsoluteLayout>
                 </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
         </FixedAbsoluteLayout>
@@ -40,6 +43,8 @@
         data: () => {
             return {
                 page: null,
+                touchX: 0,
+                touchY: 0,
                 poppingEvent: false,
                 eventNumInternal: 0,
                 eventDescription: '',
@@ -143,7 +148,7 @@
                                             }, 1000);
                                         });
                                 });
-                        }); 
+                        });
                 });
             
         },
@@ -165,7 +170,13 @@
                 this.finishInitialStage = true;
             },
             onWebviewLoadFinished(event) {
-
+                const gestures = require("ui/gestures");
+                this.page.getViewById('nonSubmap').on(gestures.GestureTypes.touch, (args) => {
+                    if (args.action === "down") {
+                        this.touchX = args.getX();
+                        this.touchY = args.getY();
+                    }
+                });
             },
             regionRatings(city) {
                 if (!this.storeLoading) {
@@ -565,25 +576,31 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         position: relative;
         margin: 0;
         padding: 0;
-        #submap {
-            margin: 0;
-            padding: 0;
-            position: relative;
-        }
-    }
-
-    .event {
-        z-index: 1;
-        .eventChoices {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: stretch;
-            .eventChoice {
-                margin-right: 2;
+        #nonEvent {
+            #nonSubmap {
+                z-index: 2;
+                background-color: rgba(0, 0, 0, 0);
+            }
+            #submap {
+                margin: 0;
+                padding: 0;
+                position: relative;
+                z-index: 3;
             }
         }
-        border-width: 2 2 2 2;
-        border-radius: 20;
+        .event {
+            z-index: 1;
+            .eventChoices {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: stretch;
+                .eventChoice {
+                    margin-right: 2;
+                }
+            }
+            border-width: 2 2 2 2;
+            border-radius: 20;
+        }
     }
 </style>
