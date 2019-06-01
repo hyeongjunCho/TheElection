@@ -12,7 +12,7 @@ const actions = {
         context.commit('setRating');
     },
     resetSupportingCandidate(context) {
-        context.commit('resetSupportingCandidate');
+        context.commit('resetSupportingCandidate', {candidates: context.rootState.candidate.candidates});
     },
 };
 
