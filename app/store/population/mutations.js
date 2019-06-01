@@ -216,13 +216,13 @@ const mutations = {
             for (const key in candidates) {
                 const candidate = candidates[key];
                 let currentDistance = distance(electorates[i].capCom, electorates[i].libCons, candidate.capCom, candidate.libCons);
-                electorates[i].goto[key] = 0.03;
+                electorates[i].goto[key] = 0.02;
                 if (currentDistance <= minDistance) {
                     minDistance = currentDistance;
                     electorates[i].supportingCandidate = key;
                 }
             }
-            electorates[i].goto[electorates[i].supportingCandidate] = 1 - 0.03 * 11;
+            electorates[i].goto[electorates[i].supportingCandidate] = 1 - 0.01 * 11;
         }
     },
     setRating: function (state) {
@@ -275,7 +275,7 @@ const mutations = {
                 const currentCandidate = candidates[key];
                 const newDistance = distance(newCandidate.capCom, newCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
                 const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
-                let probability = (newDistance - currentDistance) * 0.01;
+                let probability = (newDistance - currentDistance) * 0.015;
                 if (probability <= 0.0005)
                     probability = 0.0005;
                 electorates[i].goto[key] = probability;
