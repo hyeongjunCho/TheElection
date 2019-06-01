@@ -121,7 +121,7 @@ const mutations = {
                     break;
                 
                 case 70:
-                    capComMean += 1.375;
+                    capComMean += 1.5;
                     capComVar += 0.25;
                     libConsMean -= 1;
                     libConsVar += 0.25;
@@ -131,7 +131,7 @@ const mutations = {
             switch (electorates[i].region) {
                 case 'Seoul':
                     capComMean += 0.75;
-                    libConsMean += 0.875;
+                    libConsMean += 0.25;
                     break;
                 
                 case 'Incheon':
@@ -158,8 +158,8 @@ const mutations = {
                 case 'Busan':
                 case 'Ulsan':
                 case 'SouthGyeongSang':
-                    capComMean -= 0.35;
-                    libConsMean -= 0.5;
+                    capComMean += 0.5;
+                    libConsMean -= 0.75;
                     break;
                 
                 case 'NorthJeolla':
