@@ -18,15 +18,15 @@
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else-if="selectParty && !chooseFirstTraitQuestion" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
-                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" text="당신의 특성!을 설정하세요"/>
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(index)" v-model="choices[index]"/>
+                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(index)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
-                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" text="당신의 특성!!을 설정하세요"/>
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(index)" v-model="choices[index]"/>
+                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(index)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+    import initialEventsObject from "../assets/initialEvents.js";
+
     export default {
         data: () => {
             return {
@@ -71,7 +73,10 @@
                 poppingEvent: false,
                 eventNumInternal: 0,
                 eventDescription: '',
+                customizingQuestions: [],
+                selectedCustomizingQuestion: {},
                 choices: [],
+                question: '',
                 DdayInternal: 366,
                 firstPlaceColor: '',
                 secondPlaceColor: '',
@@ -158,6 +163,7 @@
         },
         created() {
             this.partyColors = [null, this.blue, this.red, this.green, this.yellow];
+            this.customizingQuestions = initialEventsObject;
             this.$store.dispatch('initializeCandidates')
                 .then(() => {
                     this.$store.dispatch('initializeElectorates')
@@ -176,7 +182,6 @@
                                 });
                         });
                 });
-            
         },
         mounted() {
         },
@@ -186,12 +191,31 @@
             pageLoaded(args) {
                 this.page = args.object;
             },
+            // loadJSON(path, callback) {   
+            //     var xobj = new XMLHttpRequest();
+            //         xobj.overrideMimeType("application/json");
+            //     xobj.open('GET', path, true); // Replace 'appDataServices' with the path to your file
+            //     xobj.onreadystatechange = function () {
+            //         if (xobj.readyState == 4 && xobj.status == "200") {
+            //             // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+            //             callback(xobj.responseText);
+            //         }
+            //     };
+            //     xobj.send(null);  
+            // },
             onSelectParty(party) {
-                // this.choices = this.$store.getters.;
+                const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
+                this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
+                this.choices = this.selectedCustomizingQuestion.choices;
+                this.question = this.selectedCustomizingQuestion.question;
+                this.customizingQuestion = this.customizingQuestions.splice(randomIndex, 1);
                 this.selectParty = true;
             },
             onSelectFirstTraitQuestion(num) {
-                // this.choices = this.$store.getters.;
+                const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
+                this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
+                this.choices = this.selectedCustomizingQuestion.choices;
+                this.question = this.selectedCustomizingQuestion.question;
                 this.chooseFirstTraitQuestion = true;
             },
             onSelectSecondTraitQuestion(num) {

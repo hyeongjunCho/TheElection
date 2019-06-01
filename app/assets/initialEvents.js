@@ -1,4 +1,4 @@
-[
+export default [
     {
         "question": "당신의 과거는 어떻습니까?",
         "choices": [
