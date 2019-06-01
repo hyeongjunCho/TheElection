@@ -263,30 +263,6 @@ const mutations = {
                 state.regions[state.regionBasicInfoes[i].name].ratings = JSON.parse(JSON.stringify(ratingsByRegion[state.regionBasicInfoes[i].name]));
             }
         }
-        // for (let i = 0; i < state.regionBasicInfoes.length; i++) {
-        //     const region = state.regions[state.regionBasicInfoes[i].name];
-        //     const ratings = {
-        //         1: 0,
-        //         2: 0,
-        //         3: 0,
-        //         4: 0,
-        //         5: 0,
-        //         6: 0,
-        //         7: 0,
-        //         8: 0,
-        //         9: 0,
-        //         10: 0,
-        //         11: 0,
-        //         12: 0,
-        //     };
-        //     for (let j = 0; j < region.electorates.length; j++) {
-        //         ratings[region.electorates[j].supportingCandidate]++;
-        //     }
-        //     for (let j = 1; j < 13; j++) {
-        //         totalRatings[j] += ratings[j];
-        //         region.ratings[j] = ratings[j] / state.regionBasicInfoes[i].num;
-        //     }
-        // }
         for (let i = 1; i < 13; i++) {
             state.ratings[i] = totalRatings[i] / state.numOfElectorates;
         }

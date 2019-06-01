@@ -165,29 +165,7 @@
                 this.finishInitialStage = true;
             },
             onWebviewLoadFinished(event) {
-                // const document = this.$refs.submap.android.domNode;
-                // setInterval(function() {
-                //     var pathes = Array.from(document.getElementsByTagName('path'));
-                //     var first = document.getElementById('activeCityFirstCandidateBar');
-                //     var second = document.getElementById('activeCitySecondCandidateBar');
-                //     var third = document.getElementById('activeCityThirdCandidateBar');
-                //     var newFirst = first.cloneNode(true);
-                //     var newSecond = second.cloneNode(true);
-                //     var newThird = third.cloneNode(true);
-                //     first.parentNode.replaceChild(newFirst, first);
-                //     second.parentNode.replaceChild(newSecond, second);
-                //     third.parentNode.replaceChild(newThird, third);
-                //     for (var i = 0; i < pathes.length; i++) {
-                //         pathes[i].addEventListener("click", function() {
-                //             newFirst.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[0].rating * 100}%';
-                //             newFirst.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[0].candidate / 3)]}';
-                //             newSecond.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[1].rating * 100}%';
-                //             newSecond.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[1].candidate / 3)]}';
-                //             newThird.style.width='${this.makeSortedRatings(this.regionRatings(pathes[i].className))[2].rating * 100}%';
-                //             newThird.style.backgroundColor='${this.partyColors[Math.ceil(this.makeSortedRatings(this.regionRatings(pathes[i].className))[2].candidate / 3)]}';
-                //         }, false);
-                //     }
-                // }, 3000);
+
             },
             regionRatings(city) {
                 if (!this.storeLoading) {
@@ -312,108 +290,6 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             fourthPlaceInternal() {
                 return {rating: Math.round(this.sortedRatings[3].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3 || 3}
             },
-            // svgBusanColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Busan'))[0].candidate / 3)];
-            // },
-            // svgDaeguColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Daegu'))[0].candidate / 3)];
-            // },
-            // svgDaejeonColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Daejeon'))[0].candidate / 3)];
-            // },
-            // svgGangwonColor() {
-            //     if (!this.storeLoading) {
-            //         return this.blue;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Gangwon'))[0].candidate / 3)];
-            // },
-            // svgGwangjuColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Gwangju'))[0].candidate / 3)];
-            // },
-            // svgGyeonggiColor() {
-            //     if (!this.storeLoading) {
-            //         return this.yellow;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Gyeonggi'))[0].candidate / 3)];
-            // },
-            // svgIncheonColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Incheon'))[0].candidate / 3)];
-            // },
-            // svgJejuColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Jeju'))[0].candidate / 3)];
-            // },
-            // svgNorthChungcheongColor() {
-            //     if (!this.storeLoading) {
-            //         return this.green;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('NorthChungcheong'))[0].candidate / 3)];
-            // },
-            // svgNorthGyeongsangColor() {
-            //     if (!this.storeLoading) {
-            //         return this.blue;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('NorthGyeongsang'))[0].candidate / 3)];
-            // },
-            // svgNorthJeollaColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('NorthJeolla'))[0].candidate / 3)];
-            // },
-            // svgSejongColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Sejong'))[0].candidate / 3)];
-            // },
-            // svgSeoulColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Seoul'))[0].candidate / 3)];
-            // },
-            // svgSouthChungcheongColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('SouthChungcheong'))[0].candidate / 3)];
-            // },
-            // svgSouthGyeongsangColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('SouthGyeongsang'))[0].candidate / 3)];
-            // },
-            // svgSouthJeollaColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('SouthJeolla'))[0].candidate / 3)];
-            // },
-            // svgUlasnColor() {
-            //     if (!this.storeLoading) {
-            //         return this.red;
-            //     }
-            //     return this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Ulsan'))[0].candidate / 3)];
-            // },
             svgBusan() {
                 return this.pathOpen + `class="Busan" ` +  this.svgFill + `"${this.svgBusanColor}"` + this.pathOnClick + `"${this.mapOnClick('Busan')}"` + this.busan + this.pathClose;
             },
