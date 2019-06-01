@@ -64,18 +64,10 @@ const mutations = {
             };
             for (let j = 0; j < regionBasicInfoes[i].num; j++) {
                 const electorate = JSON.parse(JSON.stringify(electorateTemplate));
-                // electorate.supportingCandidate = randomlySet(state.ratings);
                 electorate.age = randomlySet(regionBasicInfoes[i].age);
                 electorate.class = randomlySet(regionBasicInfoes[i].class);
                 electorate.politicaclEngagement = randomlySet({ 0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25 });
                 electorate.region = regionBasicInfoes[i].name;
-                // for (let k = 1; k < 13; k++) {
-                //     if (k === electorate.supportingCandidate) {
-                //         electorate.goto[k] = 1 - 0.03 * 11;
-                //     } else {
-                //         electorate.goto[k] = 0.03;
-                //     }
-                // }
                 regions[electorate.region].electorates.push(electorate);
                 ages[electorate.age].electorates.push(electorate);
                 classes[electorate.class].electorates.push(electorate);
@@ -95,7 +87,7 @@ const mutations = {
             switch (electorates[i].age) {
                 case 20:
                     capComMean += 0;
-                    capComVar += 1;
+                    capComVar += 1.25;
                     libConsMean += 1.125;
                     libConsVar += 0.5;
                     break;
@@ -139,7 +131,7 @@ const mutations = {
             switch (electorates[i].region) {
                 case 'Seoul':
                     capComMean += 0.75;
-                    libConsMean += 0.5;
+                    libConsMean += 0.875;
                     break;
                 
                 case 'Incheon':
@@ -166,7 +158,7 @@ const mutations = {
                 case 'Busan':
                 case 'Ulsan':
                 case 'SouthGyeongSang':
-                    capComMean -= 0.75;
+                    capComMean -= 0.35;
                     libConsMean -= 0.5;
                     break;
                 
@@ -198,7 +190,7 @@ const mutations = {
                     capComMean += 0.75;
                     capComVar += 0.125;
                     libConsMean += 1.0;
-                    libConsVar += 0;
+                    libConsVar += 0.125;
                     break;
             }
 
@@ -220,17 +212,17 @@ const mutations = {
         const { candidates } = payload;
 
         for (let i = 0; i < electorates.length; i++) {
-            let minDistance = 100000000;
+            let minDistance = 1000;
             for (const key in candidates) {
                 const candidate = candidates[key];
                 let currentDistance = distance(electorates[i].capCom, electorates[i].libCons, candidate.capCom, candidate.libCons);
-                electorates[i].goto[key] = 0.03;
+                electorates[i].goto[key] = 0.02;
                 if (currentDistance <= minDistance) {
                     minDistance = currentDistance;
                     electorates[i].supportingCandidate = key;
                 }
             }
-            electorates[i].goto[electorates[i].supportingCandidate] = 1 - 0.03 * 11;
+            electorates[i].goto[electorates[i].supportingCandidate] = 1 - 0.01 * 11;
         }
     },
     setRating: function (state) {
@@ -267,28 +259,29 @@ const mutations = {
             state.ratings[i] = totalRatings[i] / state.numOfElectorates;
         }
     },
-    resetSupportingCandidate: function(state) {
-        for (let i = 0; i < state.electorates.length; i++) {
-            const randomNum = Math.random();
-            
-            
-            let totalDistribution = 0;
-            for (let j = 1; j < 13; j++) {
-                totalDistribution += state.electorates[i].goto[j];
-                if (randomNum < totalDistribution) {
-                    if (j === state.electorates[i].supportingCandidate) {
-                        break;
-                    }
-                    state.electorates[i].supportingCandidate = j;
-                    for (let k = 1; k < 13; k++) {
-                        state.electorates[i].goto[k] = state.ratings[k] * state.totalProbabilityGoto;
-                    }
-                    state.electorates[i].goto[j] = 1 - (1 - state.ratings[j]) * state.totalProbabilityGoto;
+    resetSupportingCandidate: function(state, payload) {
+        const { electorates } = state;
+        const { candidates } = payload;
+
+        for (let i = 0; i < electorates.length; i++) {
+            const newCandidateKey = randomlySet(electorates[i].goto);
+            const newCandidate = candidates[newCandidateKey];
+            electorates[i].supportingCandidate = newCandidateKey;
+
+            let aggregate = 0;
+            for (let key in candidates) {
+                if (key == newCandidateKey)
                     break;
-                }
+                const currentCandidate = candidates[key];
+                const newDistance = distance(newCandidate.capCom, newCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
+                const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
+                let probability = (newDistance - currentDistance) * 0.015;
+                if (probability <= 0.0005)
+                    probability = 0.0005;
+                electorates[i].goto[key] = probability;
+                aggregate += probability;
             }
-
-
+            electorates[i].goto[newCandidateKey] = 1 - aggregate; 
         }
     },
 };
@@ -315,7 +308,7 @@ const normalRandom = function (mean, variance) {
 };
 
 const distance = function (a1, a2, b1, b2) {
-    return Math.pow((a1 - b1), 2) + Math.pow((a2 - b2), 2);
+    return Math.sqrt(Math.pow((a1 - b1), 2) + Math.pow((a2 - b2), 2));
 };
 
 export default mutations;
