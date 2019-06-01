@@ -220,7 +220,7 @@ const mutations = {
         const { candidates } = payload;
 
         for (let i = 0; i < electorates.length; i++) {
-            let minDistance = 100000000;
+            let minDistance = 1000;
             for (const key in candidates) {
                 const candidate = candidates[key];
                 let currentDistance = distance(electorates[i].capCom, electorates[i].libCons, candidate.capCom, candidate.libCons);
@@ -267,28 +267,27 @@ const mutations = {
             state.ratings[i] = totalRatings[i] / state.numOfElectorates;
         }
     },
-    resetSupportingCandidate: function(state) {
-        for (let i = 0; i < state.electorates.length; i++) {
-            const randomNum = Math.random();
-            
-            
-            let totalDistribution = 0;
-            for (let j = 1; j < 13; j++) {
-                totalDistribution += state.electorates[i].goto[j];
-                if (randomNum < totalDistribution) {
-                    if (j === state.electorates[i].supportingCandidate) {
-                        break;
-                    }
-                    state.electorates[i].supportingCandidate = j;
-                    for (let k = 1; k < 13; k++) {
-                        state.electorates[i].goto[k] = state.ratings[k] * state.totalProbabilityGoto;
-                    }
-                    state.electorates[i].goto[j] = 1 - (1 - state.ratings[j]) * state.totalProbabilityGoto;
+    resetSupportingCandidate: function(state, payload) {
+        const { electorates } = state;
+        const { candidates } = payload;
+
+        for (let i = 0; i < electorates.length; i++) {
+            const newCandidateKey = randomlySet(electorates[i].goto);
+            const newCandidate = candidates[newCandidatesKey];
+            let aggregate = 0;
+            for (let key in candidates) {
+                if (key == newCandidateKey)
                     break;
-                }
+                const currentCandidate = candidates[key];
+                const newDistance = distance(newCandidate.capCom, newCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
+                const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
+                let probability = (newDistance - currentDistance) * 0.01;
+                if (probability <= 0.0005)
+                    probability = 0.0005;
+                electorates[i].goto[key] = probability;
+                aggregate += probability;
             }
-
-
+            electorates[i].goto[newCandidateKey] = 1 - aggregate; 
         }
     },
 };
@@ -315,7 +314,7 @@ const normalRandom = function (mean, variance) {
 };
 
 const distance = function (a1, a2, b1, b2) {
-    return Math.pow((a1 - b1), 2) + Math.pow((a2 - b2), 2);
+    return Math.sqrt(Math.pow((a1 - b1), 2) + Math.pow((a2 - b2), 2));
 };
 
 export default mutations;
