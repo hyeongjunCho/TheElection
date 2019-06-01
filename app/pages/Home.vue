@@ -7,7 +7,30 @@
             <FixedAbsoluteLayout v-if="storeLoading && !finishInitialStage" top="0" left="0" width="100%" height="100%">
                 <Button @tap="onFinishInitialStage" customTop="37.5%" customLeft="30%" width="40%" height="15%" text="Start" textWrap="true" />
             </FixedAbsoluteLayout>
-            <FixedAbsoluteLayout v-if="storeLoading && finishInitialStage" top="0" left="0" width="100%" height="100%">
+            <FixedAbsoluteLayout v-if="storeLoading && finishInitialStage && !finishCustomizingStage" top="0" left="0" width="100%" height="100%">
+                <FixedAbsoluteLayout v-if="!selectParty" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" text="당신의 뿌슝빠슝을 설정하세요"/>
+                    <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
+                        <Button class="choice" text="1" @tap="() => onSelectParty(1)"/>
+                        <Button class="choice" text="2" @tap="() => onSelectParty(2)"/>
+                        <Button class="choice" text="3" @tap="() => onSelectParty(3)"/>
+                        <Button class="choice" text="4" @tap="() => onSelectParty(4)"/>
+                    </FlexboxLayout>
+                </FixedAbsoluteLayout>
+                <FixedAbsoluteLayout v-else-if="selectParty && !chooseFirstTraitQuestion" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" text="당신의 특성!을 설정하세요"/>
+                    <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
+                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(index)" v-model="choices[index]"/>
+                    </FlexboxLayout>
+                </FixedAbsoluteLayout>
+                <FixedAbsoluteLayout v-else class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" text="당신의 특성!!을 설정하세요"/>
+                    <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
+                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(index)" v-model="choices[index]"/>
+                    </FlexboxLayout>
+                </FixedAbsoluteLayout>
+            </FixedAbsoluteLayout>
+            <FixedAbsoluteLayout v-if="storeLoading && finishInitialStage && finishCustomizingStage" top="0" left="0" width="100%" height="100%">
                 <Label class="Dday" :class="'width' + screenWidth" customTop="5%" customLeft="10%" v-model="Dday" />
                 <Label class="places" :class="'width' + screenWidth" textWrap="true" customTop="4.7%" customLeft="35%" width="65%" style="word-break:word;z-index:1;">
                     <FormattedString>
@@ -58,6 +81,9 @@
                 screenWidth: Math.round(require("platform").screen.mainScreen.widthDIPs / 100) * 100,
                 storeLoading: false,
                 finishInitialStage: false,
+                selectParty: false,
+                chooseFirstTraitQuestion: false,
+                finishCustomizingStage: false,
                 htmlOpen: `
 <!doctype html>
 <html>
@@ -160,13 +186,24 @@
             pageLoaded(args) {
                 this.page = args.object;
             },
-            onFinishInitialStage() {
+            onSelectParty(party) {
+                // this.choices = this.$store.getters.;
+                this.selectParty = true;
+            },
+            onSelectFirstTraitQuestion(num) {
+                // this.choices = this.$store.getters.;
+                this.chooseFirstTraitQuestion = true;
+            },
+            onSelectSecondTraitQuestion(num) {
                 const foo = setInterval(() => {
                     if (this.DdayInternal < 366) {
                         this.DdayInternal--;
                     }
                     if (this.DdayInternal === 0) clearInterval(foo);
                 }, 3000);
+                this.finishCustomizingStage = true;
+            },
+            onFinishInitialStage() {
                 this.finishInitialStage = true;
             },
             onWebviewLoadFinished(event) {
@@ -602,5 +639,75 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             border-width: 2 2 2 2;
             border-radius: 20;
         }
+    }
+    .customize {
+        .title {
+            font-size: (3 * 7);
+            &.width400 {
+                font-size: (4 * 7);
+            }
+            &.width500 {
+                font-size: (5 * 7);
+            }
+            &.width600 {
+                font-size: (6 * 7);
+            }
+            &.width700 {
+                font-size: (7 * 7);
+            }
+            &.width800 {
+                font-size: (8 * 7);
+            }
+            &.width900 {
+                font-size: (9 * 7);
+            }
+            &.width1000 {
+                font-size: (10 * 7);
+            }
+            &.width1100 {
+                font-size: (11 * 7);
+            }
+            &.width1200 {
+                font-size: (12 * 7);
+            }
+            &.width1300 {
+                font-size: (13 * 7);
+            }
+            &.width1400 {
+                font-size: (14 * 7);
+            }
+            &.width1500 {
+                font-size: (15 * 7);
+            }
+            &.width1600 {
+                font-size: (16 * 7);
+            }
+            &.width1700 {
+                font-size: (17 * 7);
+            }
+            &.width1800 {
+                font-size: (18 * 7);
+            }
+            &.width1900 {
+                font-size: (19 * 7);
+            }
+            &.width2000 {
+                font-size: (20 * 7);
+            }
+            &.width2100 {
+                font-size: (21 * 7);
+            }
+        }
+        .choices {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            .choice {
+                margin-right: 2;
+            }
+        }
+        border-width: 2 2 2 2;
+        border-radius: 20;
     }
 </style>
