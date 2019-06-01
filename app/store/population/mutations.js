@@ -64,18 +64,10 @@ const mutations = {
             };
             for (let j = 0; j < regionBasicInfoes[i].num; j++) {
                 const electorate = JSON.parse(JSON.stringify(electorateTemplate));
-                // electorate.supportingCandidate = randomlySet(state.ratings);
                 electorate.age = randomlySet(regionBasicInfoes[i].age);
                 electorate.class = randomlySet(regionBasicInfoes[i].class);
                 electorate.politicaclEngagement = randomlySet({ 0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25 });
                 electorate.region = regionBasicInfoes[i].name;
-                // for (let k = 1; k < 13; k++) {
-                //     if (k === electorate.supportingCandidate) {
-                //         electorate.goto[k] = 1 - 0.03 * 11;
-                //     } else {
-                //         electorate.goto[k] = 0.03;
-                //     }
-                // }
                 regions[electorate.region].electorates.push(electorate);
                 ages[electorate.age].electorates.push(electorate);
                 classes[electorate.class].electorates.push(electorate);
@@ -95,7 +87,7 @@ const mutations = {
             switch (electorates[i].age) {
                 case 20:
                     capComMean += 0;
-                    capComVar += 1;
+                    capComVar += 1.25;
                     libConsMean += 1.125;
                     libConsVar += 0.5;
                     break;
@@ -139,7 +131,7 @@ const mutations = {
             switch (electorates[i].region) {
                 case 'Seoul':
                     capComMean += 0.75;
-                    libConsMean += 0.5;
+                    libConsMean += 0.875;
                     break;
                 
                 case 'Incheon':
@@ -166,7 +158,7 @@ const mutations = {
                 case 'Busan':
                 case 'Ulsan':
                 case 'SouthGyeongSang':
-                    capComMean -= 0.75;
+                    capComMean -= 0.35;
                     libConsMean -= 0.5;
                     break;
                 
@@ -198,7 +190,7 @@ const mutations = {
                     capComMean += 0.75;
                     capComVar += 0.125;
                     libConsMean += 1.0;
-                    libConsVar += 0;
+                    libConsVar += 0.125;
                     break;
             }
 
@@ -273,7 +265,9 @@ const mutations = {
 
         for (let i = 0; i < electorates.length; i++) {
             const newCandidateKey = randomlySet(electorates[i].goto);
-            const newCandidate = candidates[newCandidatesKey];
+            const newCandidate = candidates[newCandidateKey];
+            electorates[i].supportingCandidate = newCandidateKey;
+
             let aggregate = 0;
             for (let key in candidates) {
                 if (key == newCandidateKey)
