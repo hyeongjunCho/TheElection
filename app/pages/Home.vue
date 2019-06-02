@@ -38,7 +38,7 @@
                         <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
                         <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
                         <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
-                        <Span class=""  v-model="myCandidate"/>
+                        <Span class="" v-model="myCandidate"/>
                     </FormattedString>
                 </Label>
                 <Button id="rates" class="info rates" :class="'width' + screenWidth" @tap="onClickRates" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
@@ -330,7 +330,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         },
         computed: {
             myCandidate() {
-                return this.$store.getters.getMyTraits[0];
+                return this.$store.getters.getMyTraits[0] + this.$store.getters.getMyTraits[1];
             },
             Dday() {
                 return "D-" + (this.DdayInternal || 0);

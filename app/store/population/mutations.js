@@ -271,15 +271,15 @@ const mutations = {
 
             let aggregate = 0;
             for (let key in candidates) {
-                if (key == newCandidateKey)
-                    break;
+                if (key === newCandidateKey)
+                    continue;
                 const currentCandidate = candidates[key];
                 const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
                 let probability = (newDistance - currentDistance) * 0.015;
                 if (probability <= 0.0005)
                     probability = 0.0005;
                 
-                for (let j = 0; j < currentCandidate.traits.length; t++) {
+                for (let j = 0; j < currentCandidate.traits.length; j++) {
                     const trait = traitsDict[currentCandidate.traits[j]];  
                     if (Object.keys(trait.effect).includes(electorates[i].age)){
                         probability += trait.effect[electorates[i].age];
@@ -304,7 +304,8 @@ const mutations = {
 };
 
 const randomlySet = function (probabilities) {
-    const randomNum = Math.random();
+    let randomNum = 0;
+    while (randomNum === 0) randomNum = Math.random();
     let agg = 0;
     let key;
     for (key in probabilities) {
