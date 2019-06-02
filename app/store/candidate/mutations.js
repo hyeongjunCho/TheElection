@@ -28,6 +28,15 @@ const mutations = {
             candidates[i] = candidate;
         }
     },
+    setMyCandidate: function (state, payload) {
+        const myCandidate =  3 * payload.party - Math.floor(Math.random() * 3);
+        state.myCandidate = myCandidate;
+    },
+    addTrait: function (state, payload) {
+        const { candidates, myCandidate } = state;
+        const myCandidateObject = candidates[myCandidate];
+        myCandidateObject.traits.push(payload.trait);
+    },
 };
 
 const normalRandom = function (mean, variance) {

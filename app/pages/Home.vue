@@ -11,22 +11,22 @@
                 <FixedAbsoluteLayout v-if="!selectParty" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
                     <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" text="당신의 뿌슝빠슝을 설정하세요"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" text="1" @tap="() => onSelectParty(1)"/>
-                        <Button class="choice" text="2" @tap="() => onSelectParty(2)"/>
-                        <Button class="choice" text="3" @tap="() => onSelectParty(3)"/>
-                        <Button class="choice" text="4" @tap="() => onSelectParty(4)"/>
+                        <Button class="choice" text="1 뿌슝당" @tap="() => onSelectParty(1)"/>
+                        <Button class="choice" text="2 빠슝당" @tap="() => onSelectParty(2)"/>
+                        <Button class="choice" text="3 뽀슝당" @tap="() => onSelectParty(3)"/>
+                        <Button class="choice" text="4 삐슝당" @tap="() => onSelectParty(4)"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else-if="selectParty && !chooseFirstTraitQuestion" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
                     <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" @text="choice" textWrap="true" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(index)" v-model="choices[index].description"/>
+                        <Button class="choice" textWrap="true" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(choice.trait)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
                     <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" @text="choice" textWrap="true" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(index)" v-model="choices[index].description"/>
+                        <Button class="choice" textWrap="true" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(choice.trait)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
@@ -38,6 +38,7 @@
                         <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
                         <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
                         <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
+                        <Span class=""  v-model="myCandidate"/>
                     </FormattedString>
                 </Label>
                 <Button id="rates" class="info rates" :class="'width' + screenWidth" @tap="onClickRates" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
@@ -209,6 +210,7 @@
                 this.onStatusWindow = false;
             },
             onSelectParty(party) {
+                this.$store.dispatch('setMyCandidate', { party })
                 const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
                 this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
                 this.choices = this.selectedCustomizingQuestion.choices;
@@ -216,14 +218,16 @@
                 this.customizingQuestion = this.customizingQuestions.splice(randomIndex, 1);
                 this.selectParty = true;
             },
-            onSelectFirstTraitQuestion(num) {
+            onSelectFirstTraitQuestion(trait) {
+                this.$store.dispatch('addTrait', { trait })
                 const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
                 this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
                 this.choices = this.selectedCustomizingQuestion.choices;
                 this.question = this.selectedCustomizingQuestion.question;
                 this.chooseFirstTraitQuestion = true;
             },
-            onSelectSecondTraitQuestion(num) {
+            onSelectSecondTraitQuestion(trait) {
+                this.$store.dispatch('addTrait', { trait })
                 const foo = setInterval(() => {
                     if (this.DdayInternal < 366) {
                         this.DdayInternal--;
@@ -325,11 +329,8 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             },
         },
         computed: {
-            // candidate1() {
-            //     return this.$store.getters.getCandidate1.capCom;
-            // },
-            electorate1() {
-                return this.$store.getters.getSingleElectorate.capCom;
+            myCandidate() {
+                return this.$store.getters.getMyTraits[0];
             },
             Dday() {
                 return "D-" + (this.DdayInternal || 0);

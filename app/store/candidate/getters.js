@@ -1,6 +1,9 @@
 const getters = {
-    getCandidate1(state) {
-        return state.candidates[1];
+    getMyCandidate(state) {
+        return state.myCandidate;
+    },
+    getMyTraits(state) {
+        return state.candidates[state.myCandidate].traits;
     }
 };
 
