@@ -9,7 +9,7 @@
             </FixedAbsoluteLayout>
             <FixedAbsoluteLayout v-if="storeLoading && finishInitialStage && !finishCustomizingStage" top="0" left="0" width="100%" height="100%">
                 <FixedAbsoluteLayout v-if="!selectParty" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
-                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" text="당신의 뿌슝빠슝을 설정하세요"/>
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" text="당신의 뿌슝빠슝을 설정하세요"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
                         <Button class="choice" text="1" @tap="() => onSelectParty(1)"/>
                         <Button class="choice" text="2" @tap="() => onSelectParty(2)"/>
@@ -18,13 +18,13 @@
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else-if="selectParty && !chooseFirstTraitQuestion" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
-                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" v-model="question"/>
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
                         <Button class="choice" @text="choice" textWrap="true" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(index)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
-                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" v-model="question"/>
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
                         <Button class="choice" @text="choice" textWrap="true" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(index)" v-model="choices[index].description"/>
                     </FlexboxLayout>
@@ -446,6 +446,10 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             text-align: center;
             color: black;
         }
+    }
+
+    .title {
+        word-break: all;
     }
 
     .Dday {
