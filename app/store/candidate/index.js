@@ -6,14 +6,9 @@ export default {
     state: {
         candidates: {
             // num: {
-            //     status: {
-            //         capitalist: num,
-            //         socialist: num,
-            //         communitarian: num,
-            //         liberalist: num,
-            //         authoritative: num,
-            //         democratic: num,
-            //     },
+            //     party: 0,
+            //     capCom: 0,
+            //     libCons: 0,
             //     traits: [],
             // }
         },
@@ -38,6 +33,7 @@ export default {
             12: true,
         },
         activeCandidatesList: [1,2,3,4,5,6,7,8,9,10,11,12],
+        myCandidate: 0,
     },
     actions,
     mutations,

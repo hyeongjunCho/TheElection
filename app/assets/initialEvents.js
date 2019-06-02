@@ -7,8 +7,8 @@ export default [
                 "trait": "전직 운동권"
             },
             {
-                "description": "잘 나가는 육군 간부였습니다.",
-                "trait": "정치군인"
+                "description": "대선 5수째 입니다.",
+                "trait": "피닉스"
             },
             {
                 "description": "그냥 공부를 열심히 했는데요...",

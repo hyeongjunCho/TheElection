@@ -1,4 +1,4 @@
-import candidate from "../candidate";
+import traitsDict from '../../assets/traits';
 
 const mutations = {
     initializeElectorates: function (state) {
@@ -137,7 +137,7 @@ const mutations = {
                 case 'Incheon':
                 case 'Gyeonggi':
                 case 'Gangwon':
-                    capComMean += 0;
+                    capComMean -= 0.25;
                     libConsMean += 0.75;
                     break;
                 
@@ -216,13 +216,13 @@ const mutations = {
             for (const key in candidates) {
                 const candidate = candidates[key];
                 let currentDistance = distance(electorates[i].capCom, electorates[i].libCons, candidate.capCom, candidate.libCons);
-                electorates[i].goto[key] = 0.02;
+                electorates[i].goto[key] = 0;
                 if (currentDistance <= minDistance) {
                     minDistance = currentDistance;
                     electorates[i].supportingCandidate = key;
                 }
             }
-            electorates[i].goto[electorates[i].supportingCandidate] = 1 - 0.01 * 11;
+            electorates[i].goto[electorates[i].supportingCandidate] = 100;
         }
     },
     setRating: function (state) {
@@ -266,6 +266,7 @@ const mutations = {
         for (let i = 0; i < electorates.length; i++) {
             const newCandidateKey = randomlySet(electorates[i].goto);
             const newCandidate = candidates[newCandidateKey];
+            const newDistance = distance(newCandidate.capCom, newCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
             electorates[i].supportingCandidate = newCandidateKey;
 
             let aggregate = 0;
@@ -273,11 +274,27 @@ const mutations = {
                 if (key == newCandidateKey)
                     break;
                 const currentCandidate = candidates[key];
-                const newDistance = distance(newCandidate.capCom, newCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
                 const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
                 let probability = (newDistance - currentDistance) * 0.015;
                 if (probability <= 0.0005)
                     probability = 0.0005;
+                
+                for (let j = 0; j < currentCandidate.traits.length; t++) {
+                    const trait = traitsDict[currentCandidate.traits[j]];  
+                    if (Object.keys(trait.effect).includes(electorates[i].age)){
+                        probability += trait.effect[electorates[i].age];
+                    }
+                    if (Object.keys(trait.effect).includes(electorates[i].class)){
+                        probability += trait.effect[electorates[i].class];
+                    }
+                    if (Object.keys(trait.effect).includes(electorates[i].region)){
+                        probability += trait.effect[electorates[i].region];
+                    }
+                    if (Object.keys(trait.effect).includes("all")) {
+                        probability += trait.effect["all"];
+                    }
+                }
+
                 electorates[i].goto[key] = probability;
                 aggregate += probability;
             }
