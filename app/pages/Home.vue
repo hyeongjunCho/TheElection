@@ -20,13 +20,13 @@
                 <FixedAbsoluteLayout v-else-if="selectParty && !chooseFirstTraitQuestion" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
                     <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(choice.trait)" v-model="choices[index].description"/>
+                        <Button class="choice" textWrap="true" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(choice.trait)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
                     <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(choice.trait)" v-model="choices[index].description"/>
+                        <Button class="choice" textWrap="true" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(choice.trait)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
@@ -41,10 +41,17 @@
                         <Span class=""  v-model="myCandidate"/>
                     </FormattedString>
                 </Label>
-                <Button class="info rates" :class="'width' + screenWidth" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
-                <Button class="info status" :class="'width' + screenWidth" customTop="11.7%" customLeft="66.6%" width="20%" height="6%" text="Status" textWrap="true" />
-                <FixedAbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
-                    <FixedAbsoluteLayout v-if="poppingEvent" class="event" customLeft="0%" customTop="0%" width="100%" height="100%">
+                <Button id="rates" class="info rates" :class="'width' + screenWidth" @tap="onClickRates" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
+                <Button id="status" class="info status" :class="'width' + screenWidth" @tap="onClickStatus" customTop="11.7%" customLeft="66.6%" width="20%" height="6%" text="Status" textWrap="true" />
+                <FlexboxLayout v-show="onStatusWindow" id="statusWindow" flexDirection="column" customLeft="5%" customTop="25%" width="90%" height="70%">
+                    <Button id="closeStatus" @tap="closeStatus" alignSelf="center" text="close"/>
+                    <FlexboxLayout class="traits" alignSelf="stretch" flexDirection="row">
+                        <Label class="traitTitle" height="10%" justifySelf="stretch" text="Trait" textWrap="true"/>
+                        <Label class="trait" @text="trait" textWrap="true" v-for="(trait, index) in traits" :key="index"/>
+                    </FlexboxLayout>
+                </FlexboxLayout>
+                <AbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
+                    <FixedAbsoluteLayout v-if="poppingEvent" class="event" left="0" top="0" width="100%" height="100%">
                         <Label class="eventNum" customLeft="5%" customTop="5%" v-model="eventNum" />
                         <Label class="eventDescription" customLeft="5%" customTop="15%" v-model="eventDescription" />
                         <FlexboxLayout class="eventChoices" customTop="45%" customLeft="5%" width="90%" height="50%">
@@ -56,7 +63,7 @@
                         </FixedAbsoluteLayout>                    
                         <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
                     </FixedAbsoluteLayout>
-                </FixedAbsoluteLayout>
+                </AbsoluteLayout>
             </FixedAbsoluteLayout>
         </FixedAbsoluteLayout>
     </Page>
@@ -72,6 +79,7 @@
                 touchX: 0,
                 touchY: 0,
                 poppingEvent: false,
+                onStatusWindow: false,
                 eventNumInternal: 0,
                 eventDescription: '',
                 customizingQuestions: [],
@@ -192,18 +200,15 @@
             pageLoaded(args) {
                 this.page = args.object;
             },
-            // loadJSON(path, callback) {   
-            //     var xobj = new XMLHttpRequest();
-            //         xobj.overrideMimeType("application/json");
-            //     xobj.open('GET', path, true); // Replace 'appDataServices' with the path to your file
-            //     xobj.onreadystatechange = function () {
-            //         if (xobj.readyState == 4 && xobj.status == "200") {
-            //             // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-            //             callback(xobj.responseText);
-            //         }
-            //     };
-            //     xobj.send(null);  
-            // },
+            onClickRates() {
+            },
+            onClickStatus() {
+                this.page.getViewById("status").style.zIndex = 0;
+                this.onStatusWindow = true;
+            },
+            closeStatus() {
+                this.onStatusWindow = false;
+            },
             onSelectParty(party) {
                 this.$store.dispatch('setMyCandidate', { party })
                 const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
@@ -309,7 +314,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                             this.page.getViewById('submap').reload();
                         });
                     })
-                if (this.DdayInternal % 7 === 0) {
+                if (this.DdayInternal % 7 === 0 && this.DdayInternal < 360) {
                     this.eventNumInternal++;
                     this.eventDescription = 'a' * this.eventNumInternal;
                     if (Math.random() < 0.5) {
@@ -734,5 +739,21 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         }
         border-width: 2 2 2 2;
         border-radius: 20;
+    }
+    #statusWindow {
+        border-width: 2 2 2 2;
+        border-radius: 20;
+        background-color: white;
+        z-index: 10;
+        padding: 0 10 10 10;
+        overflow: scroll;
+        #closeStatus {
+            border: none;
+            box-shadow: none;
+            background-color: white;
+            &:active {
+                background-color: white;
+            }
+        }
     }
 </style>
