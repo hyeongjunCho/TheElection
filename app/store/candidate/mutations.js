@@ -37,7 +37,8 @@ const mutations = {
     addTrait: function (state, payload) {
         const { candidates, myCandidate } = state;
         const myCandidateObject = candidates[myCandidate];
-        myCandidateObject.traits.push(payload.trait);
+        if (payload.trait)
+            myCandidateObject.traits.push(payload.trait);
     },
 };
 

@@ -1,4 +1,4 @@
-import traitsDict from '../../assets/traits';
+import traitsDict from '../../assets/traits.js';
 
 const mutations = {
     initializeElectorates: function (state) {
@@ -109,12 +109,12 @@ const mutations = {
                 case 50: 
                     capComMean += 0.5;
                     capComVar += 0;
-                    libConsMean += 0;
+                    libConsMean -= 0.25;
                     libConsVar += 0.5;
                     break;
 
                 case 60: 
-                    capComMean += 1.375;
+                    capComMean += 1.25;
                     capComVar += 0.625;
                     libConsMean -= 0.5;
                     libConsVar += 0.25;
@@ -158,7 +158,7 @@ const mutations = {
                 case 'Busan':
                 case 'Ulsan':
                 case 'SouthGyeongSang':
-                    capComMean += 0.5;
+                    capComMean += 0.625;
                     libConsMean -= 0.75;
                     break;
                 
@@ -173,7 +173,7 @@ const mutations = {
 
             switch (electorates[i].class) {
                 case 0:
-                    capComMean -= 0.45;
+                    capComMean -= 0.35;
                     capComVar += 0.75;
                     libConsMean -= 0.5;
                     libConsVar += 0.25;
@@ -182,7 +182,7 @@ const mutations = {
                 case 1:
                     capComMean += 0;
                     capComVar += 0;
-                    libConsMean += 0;
+                    libConsMean -= 0.1;
                     libConsVar += 0.5;
                     break;
 
@@ -267,18 +267,26 @@ const mutations = {
         for (let i = 0; i < electorates.length; i++) {
             let newCandidateKey = randomlySet(electorates[i].goto);
 
-            for (let j = 0; j < myCandidate.traits.length; j++) {
-                const effect = traitsDict[myCandidate.traits[j]].effect;
-                for (let e in effect) {
-                    if (e === "correctionUp" && newCandidateKey !== myCandidateKey) {
-                        newCandidateKey = randomlySet({myCandidateKey: effect[e], newCandidateKey: 1 - effect[e]});
-                    }
-                    else if (e === "correctionDown" && newCandidateKey === myCandidateKey) {
-                        let otherCandidateKey;
-                        do {
-                            otherCandidateKey = Math.ceil((1 - Math.random()) * 12);
-                        } while (otherCandidateKey === myCandidateKey)
-                        newCandidateKey = randomlySet({myCandidateKey: 1 - effect[e], otherCandidateKey: effect[e]});
+            if (myCandidateKey && newCandidateKey) {
+                for (let j = 0; j < myCandidate.traits.length; j++) {
+                    const effect = traitsDict[myCandidate.traits[j]].effect;
+                    for (let e in effect) {
+                        if (e === "correctionUp" && newCandidateKey !== myCandidateKey) {
+                            const temp = {};
+                            temp[newCandidateKey] = 1 - effect[e];
+                            temp[myCandidateKey] = effect[e];
+                            newCandidateKey = randomlySet(temp);
+                        }
+                        else if (e === "correctionDown" && newCandidateKey === myCandidateKey) {
+                            let otherCandidateKey;
+                            do {
+                                otherCandidateKey = Math.ceil((1 - Math.random()) * 12);
+                            } while (otherCandidateKey === myCandidateKey)
+                            const temp = {};
+                            temp[myCandidateKey] = 1 - effect[e];
+                            temp[otherCandidateKey] = effect[e];
+                            newCandidateKey = randomlySet(temp);
+                        }
                     }
                 }
             }
@@ -308,7 +316,7 @@ const mutations = {
                 
                 let factor = 0.015;
                 for (let j = 0; j < currentCandidate.traits.length; j++) {
-                    const effect = traitsDict[currentCandidate.traits[i]].effect;
+                    const effect = traitsDict[currentCandidate.traits[j]].effect;
                     for (let e in effect) {
                         if (e === electorates[i].age ||
                             e === electorates[i].class ||
