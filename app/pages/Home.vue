@@ -216,8 +216,10 @@
             onClickRates() {
             },
             onClickStatus() {
-                this.page.getViewById("status").style.zIndex = 0;
-                this.onStatusWindow = true;
+                if (this.DdayInternal < 365) {
+                    this.page.getViewById("status").style.zIndex = "0";
+                    this.onStatusWindow = true;
+                }
             },
             closeStatus() {
                 this.onStatusWindow = false;
@@ -237,21 +239,25 @@
             },
             onSelectFirstTraitQuestion(trait) {
                 this.$store.dispatch('addTrait', { trait })
-                const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
-                this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
-                this.choices = this.selectedCustomizingQuestion.choices;
-                this.question = this.selectedCustomizingQuestion.question;
-                this.chooseFirstTraitQuestion = true;
+                    .then(() => {
+                        const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
+                        this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
+                        this.choices = this.selectedCustomizingQuestion.choices;
+                        this.question = this.selectedCustomizingQuestion.question;
+                        this.chooseFirstTraitQuestion = true;
+                    });
             },
             onSelectSecondTraitQuestion(trait) {
                 this.$store.dispatch('addTrait', { trait })
-                const foo = setInterval(() => {
-                    if (this.DdayInternal < 366) {
-                        this.DdayInternal--;
-                    }
-                    if (this.DdayInternal === 0) clearInterval(foo);
-                }, 3000);
-                this.finishCustomizingStage = true;
+                    .then(() => {
+                        const foo = setInterval(() => {
+                            if (this.DdayInternal < 366) {
+                                this.DdayInternal--;
+                            }
+                            if (this.DdayInternal === 0) clearInterval(foo);
+                        }, 3000);
+                        this.finishCustomizingStage = true;
+                    })
             },
             onFinishInitialStage() {
                 this.finishInitialStage = true;
@@ -300,6 +306,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 this.capCom = this.$store.getters.getMyCandidate.capCom;
                 this.libCons = this.$store.getters.getMyCandidate.libCons;
                 this.page.getViewById("statusGraph").reload();
+                this.page.getViewById("map").style.zIndex="0";
                 this.poppingEvent = false;
             },
         },
@@ -342,6 +349,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     } else {
                         this.choices = ['cc', 'dd', 'ee'];
                     }
+                    this.page.getViewById("map").style.zIndex="9999";
                     this.poppingEvent = true;
                 } else if (this.DdayInternal % 7 === 2) {
                     this.poppingEvent = false;
@@ -391,12 +399,9 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             statusBody() {
                 return `
 <div id="status-block" style="position: relative;left: 50%;transform: translateX(-50%);height: 100px;width: 100px;">
-    <div id="x-axes" style="position: abosolute;transform: translateY(49px);width: 100px;height: 2px;background-color: black;"></div>
-    <div id="y-axes" style="position: abosolute;transform: translateX(49px);width: 2px;height: 100px;background-color: black;"></div>
-    <div id="triangle-1" style="position: absolute;left: 50%;bottom: 50%;border-bottom: ${this.capCom * 10}px solid red;border-right: ${this.libCons * 10}px solid transparent;"></div>
-    <div id="triangle-2" style="position: absolute;left: 50%;top: 50%;border-top: ${-this.capCom * 10}px solid blue;border-right: ${this.libCons * 10}px solid transparent;"></div>
-    <div id="triangle-3" style="position: absolute;right: 50%;top: 50%;border-top: ${-this.capCom * 10}px solid green;border-left: ${-this.libCons * 10}px solid transparent;"></div>
-    <div id="triangle-4" style="position: absolute;right: 50%;bottom: 50%;border-bottom: ${this.capCom * 10}px solid yellow;border-left: ${-this.libCons * 10}px solid transparent;"></div>
+    <div id="x-axes" style="position: abosolute;transform: translateY(100px);width: 100px;height: 2px;background-color: black;"></div>
+    <div id="y-axes" style="position: abosolute;transform: translate(-2px, -2px);width: 2px;height: 102px;background-color: black;"></div>
+    <div id="rectangle" style="position: absolute;bottom: 0;left: 0;height: ${this.capCom * 10 + 50}px;width: ${this.libCons * 10 + 50}px;background-color:${this.partyColors[(this.$store.getters.myCandidate || {}).party || 0]};"></div>
 </div>
 `;
             },
@@ -695,7 +700,9 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             }
         }
         .event {
-            z-index: 1;
+            position: relative;
+            z-index: 9999;
+            background-color: white;
             .eventChoices {
                 display: flex;
                 flex-direction: column;
