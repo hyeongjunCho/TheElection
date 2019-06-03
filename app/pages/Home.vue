@@ -20,13 +20,13 @@
                 <FixedAbsoluteLayout v-else-if="selectParty && !chooseFirstTraitQuestion" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
                     <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" textWrap="true" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(choice.trait)" v-model="choices[index].description"/>
+                        <Button class="choice" textWrap="true" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectFirstTraitQuestion(choice.trait)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
                     <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" v-model="question"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" textWrap="true" @text="choice" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(choice.trait)" v-model="choices[index].description"/>
+                        <Button class="choice" textWrap="true" v-for="(choice, index) in choices" :key="index" @tap="() => onSelectSecondTraitQuestion(choice.trait)" v-model="choices[index].description"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
@@ -38,17 +38,30 @@
                         <Span class="" :style="{color: this.secondPlaceColor}" v-model="secondPlace"/>
                         <Span class="" :style="{color: this.thirdPlaceColor}" v-model="thirdPlace"/>
                         <Span class="" :style="{color: this.fourthPlaceColor}" v-model="fourthPlace"/>
-                        <Span class="" v-model="myCandidate"/>
                     </FormattedString>
                 </Label>
                 <Button id="rates" class="info rates" :class="'width' + screenWidth" @tap="onClickRates" customTop="4.7%" customLeft="66.6%" width="20%" height="6%" text="Rates" textWrap="true" />
                 <Button id="status" class="info status" :class="'width' + screenWidth" @tap="onClickStatus" customTop="11.7%" customLeft="66.6%" width="20%" height="6%" text="Status" textWrap="true" />
                 <FlexboxLayout v-show="onStatusWindow" id="statusWindow" flexDirection="column" customLeft="5%" customTop="25%" width="90%" height="70%">
                     <Button id="closeStatus" @tap="closeStatus" alignSelf="center" text="close"/>
-                    <Webview id="statusGraph" :src="statusGraph" alignSelf="center" />
-                    <FlexboxLayout class="traits" alignSelf="stretch" flexDirection="row">
-                        <Label class="traitTitle" height="10%" justifySelf="stretch" text="Trait" textWrap="true"/>
-                        <Label class="trait" @text="trait" textWrap="true" v-for="(trait, index) in traits" :key="index"/>
+                    <!-- <Webview id="statusGraph" :src="statusGraph" alignSelf="center" /> -->
+                    <Label text="Status" textWrap="true"/>
+                    <Label>
+                        <FormattedString>
+                            <Span text="capCom: "/>
+                            <Span v-model="capCom"/>
+                        </FormattedString>
+                    </Label>
+                    <Label>
+                        <FormattedString>
+                            <Span text="libCons: "/>
+                            <Span v-model="libCons"/>
+                        </FormattedString>
+                    </Label>
+                    <Label />
+                    <Label class="traitTitle" text="Trait" textWrap="true"/>
+                    <FlexboxLayout class="traits" alignSelf="stretch" flexDirection="row" flexWrap="wrap">
+                        <Button class="trait" v-for="(trait, index) in myTraits" :key="trait" v-model="myTraits[index]" color="black"/>
                     </FlexboxLayout>
                 </FlexboxLayout>
                 <AbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
@@ -79,6 +92,7 @@
                 page: null,
                 capCom: 5,
                 libCons: 4,
+                myTraits: [],
                 poppingEvent: false,
                 onStatusWindow: false,
                 eventNumInternal: 0,
@@ -107,10 +121,12 @@
 </head>
 <body>
 `,
+                statusBody: '',
                 statusHtmlClose: `
 </body>
 </html>
 `,
+                statusGraph: '',
                 svgHtmlOpen: `
 <!doctype html>
 <html>
@@ -216,10 +232,8 @@
             onClickRates() {
             },
             onClickStatus() {
-                if (this.DdayInternal < 365) {
-                    this.page.getViewById("status").style.zIndex = "0";
-                    this.onStatusWindow = true;
-                }
+                this.page.getViewById("status").style.zIndex = "0";
+                this.onStatusWindow = true;
             },
             closeStatus() {
                 this.onStatusWindow = false;
@@ -227,8 +241,8 @@
             onSelectParty(party) {
                 this.$store.dispatch('setMyCandidate', { party })
                     .then(() => {
-                        this.capCom = this.$store.getters.getMyCandidate.capCom;
-                        this.libCons = this.$store.getters.getMyCandidate.libCons;
+                        this.capCom = Math.round(this.$store.getters.getMyCandidate.capCom * 1000) / 1000;
+                        this.libCons = Math.round(this.$store.getters.getMyCandidate.libCons * 1000) / 1000;
                     });
                 const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
                 this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
@@ -303,9 +317,9 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 return sortedArrayOfObject;
             },
             selectChocies(index) {
-                this.capCom = this.$store.getters.getMyCandidate.capCom;
-                this.libCons = this.$store.getters.getMyCandidate.libCons;
-                this.page.getViewById("statusGraph").reload();
+                this.capCom = Math.round(this.$store.getters.getMyCandidate.capCom * 1000) / 1000;
+                this.libCons = Math.round(this.$store.getters.getMyCandidate.libCons * 1000) / 1000;
+                if (this.page.getViewById("statusGraph")) this.page.getViewById("statusGraph").reload();
                 this.page.getViewById("map").style.zIndex="0";
                 this.poppingEvent = false;
             },
@@ -339,8 +353,19 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                             this.svgSouthJeollaColor = this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('SouthJeolla'))[0].candidate / 3)];
                             this.svgUlasnColor = this.partyColors[Math.ceil(this.makeSortedRatings(this.$store.getters.getRegionRatings('Ulsan'))[0].candidate / 3)];
                             this.page.getViewById('submap').reload();
+                            this.myTraits = this.$store.getters.getMyTraits;
+                            
+                            this.statusBody = `
+<div id="status-block" style="position: relative;left: 50%;transform: translateX(-50%);height: 100px;width: 100px;">
+    <div id="x-axes" style="position: abosolute;transform: translateY(100px);width: 100px;height: 2px;background-color: black;"></div>
+    <div id="y-axes" style="position: abosolute;transform: translate(-2px, -2px);width: 2px;height: 102px;background-color: black;"></div>
+    <div id="rectangle" style="position: absolute;bottom: 0;left: 0;height: ${this.capCom * 10 + 50}px;width: ${this.libCons * 10 + 50}px;background-color:${this.partyColors[this.$store.getters.myCandidate.party]};"></div>
+</div>
+`;
+                            this.statusGraph = this.statusHtmlOpen + this.statusBody + this.statusHtmlClose;
+                            if (this.page.getViewById("statusGraph")) this.page.getViewById("statusGraph").reload();
                         });
-                    })
+                    });
                 if (this.DdayInternal % 7 === 0 && this.DdayInternal < 360) {
                     this.eventNumInternal++;
                     this.eventDescription = 'a' * this.eventNumInternal;
@@ -352,6 +377,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     this.page.getViewById("map").style.zIndex="9999";
                     this.poppingEvent = true;
                 } else if (this.DdayInternal % 7 === 2) {
+                    this.page.getViewById("map").style.zIndex="0";
                     this.poppingEvent = false;
                 }
             },
@@ -395,18 +421,6 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             },
             fourthPlaceInternal() {
                 return {rating: Math.round(this.sortedRatings[3].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3 || 3}
-            },
-            statusBody() {
-                return `
-<div id="status-block" style="position: relative;left: 50%;transform: translateX(-50%);height: 100px;width: 100px;">
-    <div id="x-axes" style="position: abosolute;transform: translateY(100px);width: 100px;height: 2px;background-color: black;"></div>
-    <div id="y-axes" style="position: abosolute;transform: translate(-2px, -2px);width: 2px;height: 102px;background-color: black;"></div>
-    <div id="rectangle" style="position: absolute;bottom: 0;left: 0;height: ${this.capCom * 10 + 50}px;width: ${this.libCons * 10 + 50}px;background-color:${this.partyColors[(this.$store.getters.myCandidate || {}).party || 0]};"></div>
-</div>
-`;
-            },
-            statusGraph() {
-                return this.statusHtmlOpen + this.statusBody + this.statusHtmlClose;
             },
             svgBusan() {
                 return this.pathOpen + `class="Busan" ` +  this.svgFill + `"${this.svgBusanColor}"` + this.pathOnClick + `"${this.mapOnClick('Busan')}"` + this.busan + this.pathClose;
