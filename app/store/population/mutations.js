@@ -93,14 +93,14 @@ const mutations = {
                     break;
 
                 case 30:
-                    capComMean -= 1.25;
+                    capComMean -= 0.75;
                     capComVar += 0.75;
                     libConsMean += 0.75;
                     libConsVar += 0.75;
                     break;
                 
                 case 40:
-                    capComMean -= 1.25;
+                    capComMean -= 1;
                     capComVar += 0.25;
                     libConsMean += 0;
                     libConsVar += 0.25;
@@ -143,7 +143,7 @@ const mutations = {
                 
                 case 'Daegu':
                 case 'NorthGyeongSang':
-                    capComMean += 1.5;
+                    capComMean += 1.25;
                     libConsMean += 0.25;
                     break;
 
@@ -166,14 +166,14 @@ const mutations = {
                 case 'SouthJeolla':
                 case 'Gwangju':
                 case 'Jeju':
-                    capComMean -= 2.0;
+                    capComMean -= 1.25;
                     libConsMean += 0.25;
                     break;
             }
 
             switch (electorates[i].class) {
                 case 0:
-                    capComMean -= 0.25;
+                    capComMean -= 0.45;
                     capComVar += 0.75;
                     libConsMean -= 0.5;
                     libConsVar += 0.25;
@@ -222,7 +222,7 @@ const mutations = {
                     electorates[i].supportingCandidate = key;
                 }
             }
-            electorates[i].goto[electorates[i].supportingCandidate] = 100;
+            electorates[i].goto[electorates[i].supportingCandidate] = 1;
         }
     },
     setRating: function (state) {
@@ -261,40 +261,71 @@ const mutations = {
     },
     resetSupportingCandidate: function(state, payload) {
         const { electorates } = state;
-        const { candidates } = payload;
+        const { candidates, myCandidateKey } = payload;
+        const myCandidate = candidates[myCandidateKey];
 
         for (let i = 0; i < electorates.length; i++) {
-            const newCandidateKey = randomlySet(electorates[i].goto);
+            let newCandidateKey = randomlySet(electorates[i].goto);
+
+            for (let j = 0; j < myCandidate.traits.length; j++) {
+                const effect = traitsDict[myCandidate.traits[j]].effect;
+                for (let e in effect) {
+                    if (e === "correctionUp" && newCandidateKey !== myCandidateKey) {
+                        newCandidateKey = randomlySet({myCandidateKey: effect[e], newCandidateKey: 1 - effect[e]});
+                    }
+                    else if (e === "correctionDown" && newCandidateKey === myCandidateKey) {
+                        let otherCandidateKey;
+                        do {
+                            otherCandidateKey = Math.ceil((1 - Math.random()) * 12);
+                        } while (otherCandidateKey === myCandidateKey)
+                        newCandidateKey = randomlySet({myCandidateKey: 1 - effect[e], otherCandidateKey: effect[e]});
+                    }
+                }
+            }
+
             const newCandidate = candidates[newCandidateKey];
             const newDistance = distance(newCandidate.capCom, newCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
             electorates[i].supportingCandidate = newCandidateKey;
+
+            let outflow = 0;
+            for (let j = 0; j < newCandidate.traits.length; j++){
+                const effect = traitsDict[newCandidate.traits[j]].effect;
+                for (let e in effect) {
+                    if (e === "outflow") {
+                        outflow += effect[e] / 11;
+                    }
+                }
+            }
 
             let aggregate = 0;
             for (let key in candidates) {
                 if (key === newCandidateKey)
                     continue;
+
                 const currentCandidate = candidates[key];
                 const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
-                let probability = (newDistance - currentDistance) * 0.015;
-                if (probability <= 0.0005)
-                    probability = 0.0005;
+                let probability = 0;
                 
+                let factor = 0.015;
                 for (let j = 0; j < currentCandidate.traits.length; j++) {
-                    const trait = traitsDict[currentCandidate.traits[j]];  
-                    if (Object.keys(trait.effect).includes(electorates[i].age)){
-                        probability += trait.effect[electorates[i].age];
-                    }
-                    if (Object.keys(trait.effect).includes(electorates[i].class)){
-                        probability += trait.effect[electorates[i].class];
-                    }
-                    if (Object.keys(trait.effect).includes(electorates[i].region)){
-                        probability += trait.effect[electorates[i].region];
-                    }
-                    if (Object.keys(trait.effect).includes("all")) {
-                        probability += trait.effect["all"];
+                    const effect = traitsDict[currentCandidate.traits[i]].effect;
+                    for (let e in effect) {
+                        if (e === electorates[i].age ||
+                            e === electorates[i].class ||
+                            e === electorates[i].region ||
+                            e === "inflow") {
+                                probability += effect[e];
+                            }
+                        else if (e === "factor") {
+                            factor += effect[e];
+                        }
                     }
                 }
+                probability += outflow;
+                probability += (newDistance - currentDistance) * factor;
 
+                if (probability <= 0.0001)
+                    probability = 0.0001;
                 electorates[i].goto[key] = probability;
                 aggregate += probability;
             }

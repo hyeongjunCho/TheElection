@@ -1,3 +1,5 @@
+import traitsDict from '../../assets/traits.js';
+
 const mutations = {
     initializeCandidates: function (state) {
         const { candidates, candidateTemplate } = state;
