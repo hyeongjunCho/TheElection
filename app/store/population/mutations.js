@@ -308,7 +308,7 @@ const mutations = {
                 
                 let factor = 0.015;
                 for (let j = 0; j < currentCandidate.traits.length; j++) {
-                    const effect = traitsDict[currentCandidate.traits[i]].effect;
+                    const effect = traitsDict[currentCandidate.traits[j]].effect;
                     for (let e in effect) {
                         if (e === electorates[i].age ||
                             e === electorates[i].class ||

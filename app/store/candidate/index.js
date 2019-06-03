@@ -33,7 +33,7 @@ export default {
             12: true,
         },
         activeCandidatesList: [1,2,3,4,5,6,7,8,9,10,11,12],
-        myCandidate: 0,
+        myCandidate: 1,
     },
     actions,
     mutations,
