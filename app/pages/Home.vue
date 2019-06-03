@@ -45,6 +45,7 @@
                 <Button id="status" class="info status" :class="'width' + screenWidth" @tap="onClickStatus" customTop="11.7%" customLeft="66.6%" width="20%" height="6%" text="Status" textWrap="true" />
                 <FlexboxLayout v-show="onStatusWindow" id="statusWindow" flexDirection="column" customLeft="5%" customTop="25%" width="90%" height="70%">
                     <Button id="closeStatus" @tap="closeStatus" alignSelf="center" text="close"/>
+                    <Webview id="statusGraph" :src="statusGraph" alignSelf="center" />
                     <FlexboxLayout class="traits" alignSelf="stretch" flexDirection="row">
                         <Label class="traitTitle" height="10%" justifySelf="stretch" text="Trait" textWrap="true"/>
                         <Label class="trait" @text="trait" textWrap="true" v-for="(trait, index) in traits" :key="index"/>
@@ -76,8 +77,8 @@
         data: () => {
             return {
                 page: null,
-                touchX: 0,
-                touchY: 0,
+                capCom: 5,
+                libCons: 4,
                 poppingEvent: false,
                 onStatusWindow: false,
                 eventNumInternal: 0,
@@ -98,7 +99,19 @@
                 selectParty: false,
                 chooseFirstTraitQuestion: false,
                 finishCustomizingStage: false,
-                htmlOpen: `
+                statusHtmlOpen: `
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+</head>
+<body>
+`,
+                statusHtmlClose: `
+</body>
+</html>
+`,
+                svgHtmlOpen: `
 <!doctype html>
 <html>
 <head>
@@ -126,7 +139,7 @@
                 pathShadow: 'box-shadow:5px 5px 5px 5px;',
                 pathClose: '/>',
                 svgClose: '</svg></div>',
-                htmlClose: `
+                svgHtmlClose: `
 </body>
 </html>
 `,
@@ -211,6 +224,10 @@
             },
             onSelectParty(party) {
                 this.$store.dispatch('setMyCandidate', { party })
+                    .then(() => {
+                        this.capCom = this.$store.getters.getMyCandidate.capCom;
+                        this.libCons = this.$store.getters.getMyCandidate.libCons;
+                    });
                 const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
                 this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
                 this.choices = this.selectedCustomizingQuestion.choices;
@@ -240,13 +257,13 @@
                 this.finishInitialStage = true;
             },
             onWebviewLoadFinished(event) {
-                const gestures = require("ui/gestures");
-                this.page.getViewById('nonSubmap').on(gestures.GestureTypes.touch, (args) => {
-                    if (args.action === "down") {
-                        this.touchX = args.getX();
-                        this.touchY = args.getY();
-                    }
-                });
+                // const gestures = require("ui/gestures");
+                // this.page.getViewById('nonSubmap').on(gestures.GestureTypes.touch, (args) => {
+                //     if (args.action === "down") {
+                //         this.touchX = args.getX();
+                //         this.touchY = args.getY();
+                //     }
+                // });
             },
             regionRatings(city) {
                 if (!this.storeLoading) {
@@ -280,6 +297,9 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 return sortedArrayOfObject;
             },
             selectChocies(index) {
+                this.capCom = this.$store.getters.getMyCandidate.capCom;
+                this.libCons = this.$store.getters.getMyCandidate.libCons;
+                this.page.getViewById("statusGraph").reload();
                 this.poppingEvent = false;
             },
         },
@@ -330,7 +350,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         },
         computed: {
             myCandidate() {
-                return this.$store.getters.getMyTraits[0] + this.$store.getters.getMyTraits[1];
+                return this.$store.getters.getMyTraits[0] + this.$store.getters.getMyTraits[1] + this.capCom + " " + this.libCons;
             },
             Dday() {
                 return "D-" + (this.DdayInternal || 0);
@@ -367,6 +387,21 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             },
             fourthPlaceInternal() {
                 return {rating: Math.round(this.sortedRatings[3].rating * 1000) / 10, party: Math.ceil(this.sortedRatings[3].candidate / 3), num: this.sortedRatings[3].candidate % 3 || 3}
+            },
+            statusBody() {
+                return `
+<div id="status-block" style="position: relative;left: 50%;transform: translateX(-50%);height: 100px;width: 100px;">
+    <div id="x-axes" style="position: abosolute;transform: translateY(49px);width: 100px;height: 2px;background-color: black;"></div>
+    <div id="y-axes" style="position: abosolute;transform: translateX(49px);width: 2px;height: 100px;background-color: black;"></div>
+    <div id="triangle-1" style="position: absolute;left: 50%;bottom: 50%;border-bottom: ${this.capCom * 10}px solid red;border-right: ${this.libCons * 10}px solid transparent;"></div>
+    <div id="triangle-2" style="position: absolute;left: 50%;top: 50%;border-top: ${-this.capCom * 10}px solid blue;border-right: ${this.libCons * 10}px solid transparent;"></div>
+    <div id="triangle-3" style="position: absolute;right: 50%;top: 50%;border-top: ${-this.capCom * 10}px solid green;border-left: ${-this.libCons * 10}px solid transparent;"></div>
+    <div id="triangle-4" style="position: absolute;right: 50%;bottom: 50%;border-bottom: ${this.capCom * 10}px solid yellow;border-left: ${-this.libCons * 10}px solid transparent;"></div>
+</div>
+`;
+            },
+            statusGraph() {
+                return this.statusHtmlOpen + this.statusBody + this.statusHtmlClose;
             },
             svgBusan() {
                 return this.pathOpen + `class="Busan" ` +  this.svgFill + `"${this.svgBusanColor}"` + this.pathOnClick + `"${this.mapOnClick('Busan')}"` + this.busan + this.pathClose;
@@ -420,7 +455,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 return this.pathOpen + `class="Ulsan" ` + this.ulsan + this.svgFill + `"${this.svgUlasnColor}"` + this.pathOnClick + `"${this.mapOnClick('Ulsan')}"` + this.pathClose;
             },
             svgSouthKorea() {
-                return this.htmlOpen + this.svgOpen + this.svgBusan + this.svgDaegu + this.svgDaejeon + this.svgGyeonggi + this.svgGangwon + this.svgGwangju + this.svgIncheon + this.svgJeju + this.svgNorthChungcheong + this.svgNorthGyeongsang + this.svgNorthJeolla + this.svgSejong + this.svgSeoul + this.svgSouthChungcheong + this.svgSouthGyeongsang + this.svgSouthJeolla + this.svgUlsan + this.svgClose + this.htmlClose;
+                return this.svgHtmlOpen + this.svgOpen + this.svgBusan + this.svgDaegu + this.svgDaejeon + this.svgGyeonggi + this.svgGangwon + this.svgGwangju + this.svgIncheon + this.svgJeju + this.svgNorthChungcheong + this.svgNorthGyeongsang + this.svgNorthJeolla + this.svgSejong + this.svgSeoul + this.svgSouthChungcheong + this.svgSouthGyeongsang + this.svgSouthJeolla + this.svgUlsan + this.svgClose + this.svgHtmlClose;
             },
         },
     };
