@@ -232,8 +232,10 @@
             onClickRates() {
             },
             onClickStatus() {
-                this.page.getViewById("status").style.zIndex = "0";
-                this.onStatusWindow = true;
+                if (!this.poppingEvent) {
+                    this.page.getViewById("status").style.zIndex = "0";
+                    this.onStatusWindow = true;
+                }
             },
             closeStatus() {
                 this.onStatusWindow = false;
@@ -375,6 +377,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                         this.choices = ['cc', 'dd', 'ee'];
                     }
                     this.page.getViewById("map").style.zIndex="9999";
+                    this.onStatusWindow = false;
                     this.poppingEvent = true;
                 } else if (this.DdayInternal % 7 === 2) {
                     this.page.getViewById("map").style.zIndex="0";
