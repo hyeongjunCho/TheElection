@@ -40,11 +40,11 @@ const mutations = {
         const myCandidateObject = candidates[myCandidate];
         if (payload.trait){
             const duration = traitsDict[payload.trait].duration;
-            myCandidateObject.traits.push({name: payload.trait, duration: duration});
+            myCandidateObject.traits.push({name: payload.trait, duration});
         }
     },
     countDownTraits: function (state) {
-        const { myCandidate } = state;
+        const { candidates, myCandidate } = state;
         const myTraits = candidates[myCandidate].traits;
         for (let i = 0; i < myTraits.length; i++) {
             if (myTraits[i].duration > 0) {
