@@ -24,7 +24,7 @@ const mutations = {
                 
                 case 4: // 정의당
                     candidate.capCom = normalRandom(-1.5, 1.5);
-                    candidate.libCons = normalRandom(+2, 2);
+                    candidate.libCons = normalRandom(+2, 1.5);
                     break;
             }            
             candidates[i] = candidate;
@@ -37,9 +37,24 @@ const mutations = {
     addTrait: function (state, payload) {
         const { candidates, myCandidate } = state;
         const myCandidateObject = candidates[myCandidate];
-        if (payload.trait)
-            myCandidateObject.traits.push(payload.trait);
+        if (payload.trait){
+            const duration = traitsDict[payload.trait].duration;
+            myCandidateObject.traits.push({name: payload.trait, duration: duration});
+        }
     },
+    countDownTraits: function (state) {
+        const { myCandidate } = state;
+        const myTraits = candidates[myCandidate].traits;
+        for (let i = 0; i < myTraits.length; i++) {
+            if (myTraits[i].duration > 0) {
+                myTraits[i].duration -= 1;
+            }
+            if (myTraits[i].duration == 0) {
+                myTraits.splice(i, 1);
+                i -= 1;
+            }
+        }
+    }
 };
 
 const normalRandom = function (mean, variance) {
