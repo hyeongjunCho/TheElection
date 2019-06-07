@@ -79,12 +79,12 @@
                 <FixedAbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
                     <FixedAbsoluteLayout v-if="poppingEvent" class="event" top="0" left="0" width="100%" height="100%">
                         <FlexboxLayout flexDirection="column" customTop="5%" customLeft="5%" width="90%" height="90%">
-                            <Label class="eventNum" v-model="eventNum" alignSelf="flex-start" />
+                            <Label class="eventNum" :class="'width' + screenWidth" v-model="eventNum" alignSelf="flex-start" />
                             <Label class="blank" :class="'width' + screenWidth" text=" "/>
-                            <Label class="eventDescription" v-model="eventDescription" alignSelf="stretch" textWrap="true"/>
+                            <Label class="eventDescription" :class="'width' + screenWidth" v-model="eventDescription" alignSelf="stretch" textWrap="true"/>
                             <Label class="blank" :class="'width' + screenWidth" text=" "/>
                             <FlexboxLayout class="eventChoices" flexDirection="column" alignSelf="stretch">
-                                <Button class="eventChoice" alignSelf="stretch" v-for="(choice, index) in choices" :key="index" @tap="() => selectEventChoices(index)" v-model="choices[index].description"/>
+                                <Button class="eventChoice" :class="'width' + screenWidth" alignSelf="stretch" v-for="(choice, index) in choices" :key="index" @tap="() => selectEventChoices(index)" v-model="choices[index].description"/>
                             </FlexboxLayout>
                         </FlexboxLayout>
                     </FixedAbsoluteLayout>
@@ -219,6 +219,10 @@
         created() {
             this.partyColors = [null, this.blue, this.red, this.green, this.yellow];
             this.customizingQuestions = initialEventsObject;
+            this.$store.dispatch('initializeEventPool')
+                .then(() => {
+                    this.$store.dispatch('chooseNextEvent');
+                });
             this.$store.dispatch('initializeCandidates')
                 .then(() => {
                     this.$store.dispatch('initializeElectorates')
@@ -388,10 +392,6 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
 `;
                             this.statusGraph = this.statusHtmlOpen + this.statusBody + this.statusHtmlClose;
                             if (this.page.getViewById("statusGraph")) this.page.getViewById("statusGraph").reload();
-                            this.$store.dispatch('initializeEventPool')
-                                .then(() => {
-                                    this.$store.dispatch('chooseNextEvent');
-                                });
                         });
                     });
                 if (this.DdayInternal % 7 === 0 && this.DdayInternal < 360 && this.DdayInternal > 0) {
@@ -402,7 +402,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     this.page.getViewById("map").style.zIndex="9999";
                     this.onStatusWindow = false;
                     this.poppingEvent = true;
-                } else if (this.DdayInternal % 7 === 2) {
+                } else if (this.DdayInternal % 7 === 2 && this.poppingEvent) {
                     this.selectEventChoices(-1);
                 }
             },
@@ -742,6 +742,120 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             position: relative;
             z-index: 9999;
             background-color: white;
+            .eventNum {
+                font-size: (3 * 4.34);
+                &.width400 {
+                    font-size: (4 * 4.34);
+                }
+                &.width500 {
+                    font-size: (5 * 4.34);
+                }
+                &.width600 {
+                    font-size: (6 * 4.34);
+                }
+                &.width700 {
+                    font-size: (7 * 4.34);
+                }
+                &.width800 {
+                    font-size: (8 * 4.34);
+                }
+                &.width900 {
+                    font-size: (9 * 4.34);
+                }
+                &.width1000 {
+                    font-size: (10 * 4.34);
+                }
+                &.width1100 {
+                    font-size: (11 * 4.34);
+                }
+                &.width1200 {
+                    font-size: (12 * 4.34);
+                }
+                &.width1300 {
+                    font-size: (13 * 4.34);
+                }
+                &.width1400 {
+                    font-size: (14 * 4.34);
+                }
+                &.width1500 {
+                    font-size: (15 * 4.34);
+                }
+                &.width1600 {
+                    font-size: (16 * 4.34);
+                }
+                &.width1700 {
+                    font-size: (17 * 4.34);
+                }
+                &.width1800 {
+                    font-size: (18 * 4.34);
+                }
+                &.width1900 {
+                    font-size: (19 * 4.34);
+                }
+                &.width2000 {
+                    font-size: (20 * 4.34);
+                }
+                &.width2100 {
+                    font-size: (21 * 4.34);
+                }
+            }
+            .eventDescription {
+                font-size: (3 * 4.34);
+                &.width400 {
+                    font-size: (4 * 4.34);
+                }
+                &.width500 {
+                    font-size: (5 * 4.34);
+                }
+                &.width600 {
+                    font-size: (6 * 4.34);
+                }
+                &.width700 {
+                    font-size: (7 * 4.34);
+                }
+                &.width800 {
+                    font-size: (8 * 4.34);
+                }
+                &.width900 {
+                    font-size: (9 * 4.34);
+                }
+                &.width1000 {
+                    font-size: (10 * 4.34);
+                }
+                &.width1100 {
+                    font-size: (11 * 4.34);
+                }
+                &.width1200 {
+                    font-size: (12 * 4.34);
+                }
+                &.width1300 {
+                    font-size: (13 * 4.34);
+                }
+                &.width1400 {
+                    font-size: (14 * 4.34);
+                }
+                &.width1500 {
+                    font-size: (15 * 4.34);
+                }
+                &.width1600 {
+                    font-size: (16 * 4.34);
+                }
+                &.width1700 {
+                    font-size: (17 * 4.34);
+                }
+                &.width1800 {
+                    font-size: (18 * 4.34);
+                }
+                &.width1900 {
+                    font-size: (19 * 4.34);
+                }
+                &.width2000 {
+                    font-size: (20 * 4.34);
+                }
+                &.width2100 {
+                    font-size: (21 * 4.34);
+                }
+            }
             .eventChoices {
                 display: flex;
                 flex-direction: column;
@@ -749,6 +863,61 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 align-items: stretch;
                 .eventChoice {
                     margin-right: 2;
+                    font-size: (3 * 4.34);
+                    &.width400 {
+                        font-size: (4 * 4.34);
+                    }
+                    &.width500 {
+                        font-size: (5 * 4.34);
+                    }
+                    &.width600 {
+                        font-size: (6 * 4.34);
+                    }
+                    &.width700 {
+                        font-size: (7 * 4.34);
+                    }
+                    &.width800 {
+                        font-size: (8 * 4.34);
+                    }
+                    &.width900 {
+                        font-size: (9 * 4.34);
+                    }
+                    &.width1000 {
+                        font-size: (10 * 4.34);
+                    }
+                    &.width1100 {
+                        font-size: (11 * 4.34);
+                    }
+                    &.width1200 {
+                        font-size: (12 * 4.34);
+                    }
+                    &.width1300 {
+                        font-size: (13 * 4.34);
+                    }
+                    &.width1400 {
+                        font-size: (14 * 4.34);
+                    }
+                    &.width1500 {
+                        font-size: (15 * 4.34);
+                    }
+                    &.width1600 {
+                        font-size: (16 * 4.34);
+                    }
+                    &.width1700 {
+                        font-size: (17 * 4.34);
+                    }
+                    &.width1800 {
+                        font-size: (18 * 4.34);
+                    }
+                    &.width1900 {
+                        font-size: (19 * 4.34);
+                    }
+                    &.width2000 {
+                        font-size: (20 * 4.34);
+                    }
+                    &.width2100 {
+                        font-size: (21 * 4.34);
+                    }
                 }
             }
             border-width: 2 2 2 2;
