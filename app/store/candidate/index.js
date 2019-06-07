@@ -7,6 +7,7 @@ export default {
         candidates: {
             // num: {
             //     party: 0,
+            //     numOnParty: 0,
             //     capCom: 0,
             //     libCons: 0,
             //     traits: [],
@@ -14,6 +15,7 @@ export default {
         },
         candidateTemplate: {
             party: 0,
+            numOnParty: 0,
             capCom: 0,  // capitalist-communist value, -5 ~ +5
             libCons: 0, // liberal-conservative value, -5 ~ +5
             traits: [],

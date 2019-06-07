@@ -3,7 +3,10 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 export default {
-    state: {},
+    state: {
+        event: {},
+        eventPool: [],
+    },
     actions,
     mutations,
     getters

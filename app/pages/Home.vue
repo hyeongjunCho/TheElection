@@ -48,6 +48,18 @@
                     <Label text="Status" textWrap="true"/>
                     <Label>
                         <FormattedString>
+                            <Span text="정당: "/>
+                            <Span v-model="myCandidate.party"/>
+                        </FormattedString>
+                    </Label>
+                    <Label>
+                        <FormattedString>
+                            <Span text="후보 번호: "/>
+                            <Span v-model="myCandidate.numOnParty"/>
+                        </FormattedString>
+                    </Label>
+                    <Label>
+                        <FormattedString>
                             <Span text="capCom: "/>
                             <Span v-model="capCom"/>
                         </FormattedString>
@@ -64,12 +76,16 @@
                         <Button class="trait" v-for="(trait, index) in myTraits" :key="trait" v-model="myTraits[index]" color="black"/>
                     </FlexboxLayout>
                 </FlexboxLayout>
-                <AbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
-                    <FixedAbsoluteLayout v-if="poppingEvent" class="event" left="0" top="0" width="100%" height="100%">
-                        <Label class="eventNum" customLeft="5%" customTop="5%" v-model="eventNum" />
-                        <Label class="eventDescription" customLeft="5%" customTop="15%" width="90%" v-model="eventDescription" textWrap="true"/>
-                        <FlexboxLayout class="eventChoices" customTop="45%" customLeft="5%" width="90%" height="50%">
-                            <Button class="eventChoice" v-for="(choice, index) in choices" :key="index" @tap="() => selectChocies(index)" v-model="choices[index]"/>
+                <FixedAbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
+                    <FixedAbsoluteLayout v-if="poppingEvent" class="event" top="0" left="0" width="100%" height="100%">
+                        <FlexboxLayout flexDirection="column" customTop="5%" customLeft="5%" width="90%" height="90%">
+                            <Label class="eventNum" v-model="eventNum" alignSelf="flex-start" />
+                            <Label class="blank" :class="'width' + screenWidth" text=" "/>
+                            <Label class="eventDescription" v-model="eventDescription" alignSelf="stretch" textWrap="true"/>
+                            <Label class="blank" :class="'width' + screenWidth" text=" "/>
+                            <FlexboxLayout class="eventChoices" flexDirection="column" alignSelf="stretch">
+                                <Button class="eventChoice" alignSelf="stretch" v-for="(choice, index) in choices" :key="index" @tap="() => selectEventChoices(index)" v-model="choices[index].description"/>
+                            </FlexboxLayout>
                         </FlexboxLayout>
                     </FixedAbsoluteLayout>
                     <FixedAbsoluteLayout v-show="!poppingEvent" id="nonEvent" customLeft="0%" customTop="0%" width="100%" height="100%">
@@ -77,7 +93,7 @@
                         </FixedAbsoluteLayout>                    
                         <Webview ref="submap" id="submap" @loadFinished="onWebviewLoadFinished" :src="svgSouthKorea" width="100%" height="100%" customTop="0%" customLeft="0%" />
                     </FixedAbsoluteLayout>
-                </AbsoluteLayout>
+                </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
         </FixedAbsoluteLayout>
     </Page>
@@ -99,6 +115,7 @@
                 eventDescription: '',
                 customizingQuestions: [],
                 selectedCustomizingQuestion: {},
+                event: {},
                 choices: [],
                 question: '',
                 DdayInternal: 366,
@@ -243,8 +260,8 @@
             onSelectParty(party) {
                 this.$store.dispatch('setMyCandidate', { party })
                     .then(() => {
-                        this.capCom = Math.round(this.$store.getters.getMyCandidate.capCom * 1000) / 1000;
-                        this.libCons = Math.round(this.$store.getters.getMyCandidate.libCons * 1000) / 1000;
+                        this.capCom = Math.round(this.myCandidate.capCom * 1000) / 1000;
+                        this.libCons = Math.round(this.myCandidate.libCons * 1000) / 1000;
                     });
                 const randomIndex = Math.floor(Math.random() * this.customizingQuestions.length);
                 this.selectedCustomizingQuestion = this.customizingQuestions[randomIndex];
@@ -318,12 +335,16 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 });
                 return sortedArrayOfObject;
             },
-            selectChocies(index) {
-                this.capCom = Math.round(this.$store.getters.getMyCandidate.capCom * 1000) / 1000;
-                this.libCons = Math.round(this.$store.getters.getMyCandidate.libCons * 1000) / 1000;
+            selectEventChoices(index) {
+                this.capCom = Math.round(this.myCandidate.capCom * 1000) / 1000;
+                this.libCons = Math.round(this.myCandidate.libCons * 1000) / 1000;
                 if (this.page.getViewById("statusGraph")) this.page.getViewById("statusGraph").reload();
                 this.page.getViewById("map").style.zIndex="0";
                 this.poppingEvent = false;
+                this.$store.dispatch('selectEventChoices', { index })
+                    .then(() => {
+                        this.$store.dispatch('chooseNextEvent');
+                    })
             },
         },
         watch: {
@@ -361,30 +382,31 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
 <div id="status-block" style="position: relative;left: 50%;transform: translateX(-50%);height: 100px;width: 100px;">
     <div id="x-axes" style="position: abosolute;transform: translateY(100px);width: 100px;height: 2px;background-color: black;"></div>
     <div id="y-axes" style="position: abosolute;transform: translate(-2px, -2px);width: 2px;height: 102px;background-color: black;"></div>
-    <div id="rectangle" style="position: absolute;bottom: 0;left: 0;height: ${this.capCom * 10 + 50}px;width: ${this.libCons * 10 + 50}px;background-color:${this.partyColors[this.$store.getters.myCandidate.party]};"></div>
+    <div id="rectangle" style="position: absolute;bottom: 0;left: 0;height: ${this.capCom * 10 + 50}px;width: ${this.libCons * 10 + 50}px;background-color:${this.partyColors[this.myCandidate.party]};"></div>
 </div>
 `;
                             this.statusGraph = this.statusHtmlOpen + this.statusBody + this.statusHtmlClose;
                             if (this.page.getViewById("statusGraph")) this.page.getViewById("statusGraph").reload();
+                            this.$store.dispatch('initializeEventPool')
+                                .then(() => {
+                                    this.$store.dispatch('chooseNextEvent');
+                                });
                         });
                     });
-                if (this.DdayInternal % 7 === 0 && this.DdayInternal < 360) {
+                if (this.DdayInternal % 7 === 0 && this.DdayInternal < 360 && this.DdayInternal > 0) {
                     this.eventNumInternal++;
-                    this.eventDescription = "최근 게임 중독에 대한 우려가 제기되면서 정부 차원의 규제를 요구하는 학부모들이 늘었습니다. 이에 대한 당신의 견해는 어떻습니까?";
-                    this.choices = ["게임은 중독을 유발할 수 있고 이는 보건 문제로 다뤄져야 합니다.", "게임은 하나의 산업으로 섣불리 정부가 규제하기보단 내부 방침에 따르는 것이 옳습니다."];
+                    this.event = this.$store.getters.getEvent;
+                    this.eventDescription = this.event.description;
+                    this.choices = this.event.choices;
                     this.page.getViewById("map").style.zIndex="9999";
                     this.onStatusWindow = false;
                     this.poppingEvent = true;
                 } else if (this.DdayInternal % 7 === 2) {
-                    this.page.getViewById("map").style.zIndex="0";
-                    this.poppingEvent = false;
+                    this.selectEventChoices(-1);
                 }
             },
         },
         computed: {
-            myCandidate() {
-                return this.$store.getters.getMyTraits[0] + this.$store.getters.getMyTraits[1] + this.capCom + " " + this.libCons;
-            },
             Dday() {
                 return "D-" + (this.DdayInternal || 0);
             },
@@ -393,6 +415,9 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             },
             ratings() {
                 return this.$store.getters.getTotalRatings;
+            },
+            myCandidate() {
+                return this.$store.getters.getMyCandidate;
             },
             sortedRatings() {
                 return this.makeSortedRatings(this.ratings);
@@ -813,6 +838,63 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             &:active {
                 background-color: white;
             }
+        }
+    }
+    .blank {
+        font-size: (3 * 3);
+        &.width400 {
+            font-size: (4 * 3);
+        }
+        &.width500 {
+            font-size: (5 * 3);
+        }
+        &.width600 {
+            font-size: (6 * 3);
+        }
+        &.width700 {
+            font-size: (7 * 3);
+        }
+        &.width800 {
+            font-size: (8 * 3);
+        }
+        &.width900 {
+            font-size: (9 * 3);
+        }
+        &.width1000 {
+            font-size: (10 * 3);
+        }
+        &.width1100 {
+            font-size: (11 * 3);
+        }
+        &.width1200 {
+            font-size: (12 * 3);
+        }
+        &.width1300 {
+            font-size: (13 * 3);
+        }
+        &.width1400 {
+            font-size: (14 * 3);
+        }
+        &.width1500 {
+            font-size: (15 * 3);
+        }
+        &.width1600 {
+            font-size: (16 * 3);
+        }
+        &.width1700 {
+            font-size: (17 * 3);
+        }
+        &.width1800 {
+            font-size: (18 * 3);
+        }
+        &.width1900 {
+            font-size: (19 * 3);
+        }
+        &.width2000 {
+            font-size: (20 * 3);
+        }
+        &.width2100 {
+            font-size: (21 * 3);
         }
     }
 </style>
