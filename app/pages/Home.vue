@@ -355,6 +355,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             DdayInternal() {
                 this.$store.dispatch('resetSupportingCandidate')
                     .then(() => {
+                        this.$store.dispatch('countDownTraits');
                         this.$store.dispatch('setRating')
                         .then(() => {
                             this.firstPlaceColor = this.partyColors[this.firstPlaceInternal.party];

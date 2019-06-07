@@ -89,21 +89,21 @@ const mutations = {
             switch (electorates[i].age) {
                 case 20:
                     capComMean += 0;
-                    capComVar += 1.25;
-                    libConsMean += 1.125;
-                    libConsVar += 0.5;
+                    capComVar += 1;
+                    libConsMean += 0.75;
+                    libConsVar += 0.35;
                     break;
 
                 case 30:
-                    capComMean -= 0.75;
-                    capComVar += 0.75;
-                    libConsMean += 0.75;
-                    libConsVar += 0.75;
+                    capComMean -= 0.55;
+                    capComVar += 0.45;
+                    libConsMean += 0.55;
+                    libConsVar += 0.5;
                     break;
                 
                 case 40:
-                    capComMean -= 1;
-                    capComVar += 0.25;
+                    capComMean -= 0.75;
+                    capComVar += 0.1;
                     libConsMean += 0;
                     libConsVar += 0.25;
                     break;
@@ -116,7 +116,7 @@ const mutations = {
                     break;
 
                 case 60: 
-                    capComMean += 1.25;
+                    capComMean += 1;
                     capComVar += 0.625;
                     libConsMean -= 0.5;
                     libConsVar += 0.25;
@@ -132,7 +132,7 @@ const mutations = {
 
             switch (electorates[i].region) {
                 case 'Seoul':
-                    capComMean += 0.75;
+                    capComMean += 0.5;
                     libConsMean += 0.25;
                     break;
                 
@@ -168,7 +168,7 @@ const mutations = {
                 case 'SouthJeolla':
                 case 'Gwangju':
                 case 'Jeju':
-                    capComMean -= 1.25;
+                    capComMean -= 1;
                     libConsMean += 0.25;
                     break;
             }
@@ -275,7 +275,7 @@ const mutations = {
 
             if (myCandidateKey && newCandidateKey) {
                 for (let j = 0; j < myCandidate.traits.length; j++) {
-                    const effect = traitsDict[myCandidate.traits[j]].effect;
+                    const effect = traitsDict[myCandidate.traits[j].name].effect;
                     for (let e in effect) {
                         if (e === "correctionUp" && newCandidateKey !== myCandidateKey) {
                             const temp = {};
@@ -293,6 +293,12 @@ const mutations = {
                             temp[otherCandidateKey] = effect[e];
                             newCandidateKey = randomlySet(temp);
                         }
+                        else if (e === "electorates") {
+                            if (Math.random() <= effect[e].probability) {
+                                electorates[i].capCom += effect[e].capCom;
+                                electorates[i].libCons += effect[e].libCons;
+                            }
+                        }
                     }
                 }
             }
@@ -303,7 +309,7 @@ const mutations = {
 
             let outflow = 0;
             for (let j = 0; j < newCandidate.traits.length; j++){
-                const effect = traitsDict[newCandidate.traits[j]].effect;
+                const effect = traitsDict[newCandidate.traits[j].name].effect;
                 for (let e in effect) {
                     if (e === "outflow") {
                         outflow += effect[e] / 11;
@@ -322,7 +328,20 @@ const mutations = {
                 
                 let factor = 0.015;
                 for (let j = 0; j < currentCandidate.traits.length; j++) {
-                    const effect = traitsDict[currentCandidate.traits[j]].effect;
+                    const effect = traitsDict[currentCandidate.traits[j].name].effect;
+                    for (let e in effect) {
+                        if (e === "factor") {
+                            factor += effect[e];
+                        }
+                    }
+                }
+                probability += (newDistance - currentDistance) * factor;
+
+                if (probability <= 0.0001)
+                    probability = 0.0001;
+
+                for (let j = 0; j < currentCandidate.traits.length; j++) {
+                    const effect = traitsDict[currentCandidate.traits[j].name].effect;
                     for (let e in effect) {
                         if (e === electorates[i].age ||
                             e === electorates[i].class ||
@@ -336,10 +355,7 @@ const mutations = {
                     }
                 }
                 probability += outflow;
-                probability += (newDistance - currentDistance) * factor;
 
-                if (probability <= 0.0001)
-                    probability = 0.0001;
                 electorates[i].goto[key] = probability;
                 aggregate += probability;
             }

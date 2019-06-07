@@ -7,6 +7,9 @@ const actions = {
     },
     addTrait(context, payload) {
         context.commit('addTrait', payload);
+    },
+    countDownTraits(context) {
+        context.commit('countDownTraits');
     }
 };
 
