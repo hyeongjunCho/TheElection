@@ -10,6 +10,9 @@ const actions = {
     },
     countDownTraits(context) {
         context.commit('countDownTraits');
+    },
+    selectEventChoices(context, payload) {
+        context.commit('selectEventChoices', payload);
     }
 };
 

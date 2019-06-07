@@ -6,10 +6,8 @@ const mutations = {
             state.eventPool.push(...eventList);
         } while(state.eventPool.length < 52);
     },
-    selectEventChoices: function (state, payload) {
-    },
     chooseNextEvent: function(state) {
-        state.event = state.eventPool.pop();
+        state.event = state.eventPool.shift();
     },
 };
 

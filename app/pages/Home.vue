@@ -73,7 +73,7 @@
                     <Label />
                     <Label class="traitTitle" text="Trait" textWrap="true"/>
                     <FlexboxLayout class="traits" alignSelf="stretch" flexDirection="row" flexWrap="wrap">
-                        <Button class="trait" v-for="(trait, index) in myTraits" :key="trait" v-model="myTraits[index]" color="black"/>
+                        <Button class="trait" v-for="(trait, index) in myTraits" :key="trait" v-model="myTraits[index].name" color="black"/>
                     </FlexboxLayout>
                 </FlexboxLayout>
                 <FixedAbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
@@ -84,7 +84,7 @@
                             <Label class="eventDescription" :class="'width' + screenWidth" v-model="eventDescription" alignSelf="stretch" textWrap="true"/>
                             <Label class="blank" :class="'width' + screenWidth" text=" "/>
                             <FlexboxLayout class="eventChoices" flexDirection="column" alignSelf="stretch">
-                                <Button class="eventChoice" :class="'width' + screenWidth" alignSelf="stretch" v-for="(choice, index) in choices" :key="index" @tap="() => selectEventChoices(index)" v-model="choices[index].description"/>
+                                <Button class="eventChoice" :class="'width' + screenWidth" :id="'button' + index" @loaded="onEventChoicesLoaded" alignSelf="stretch" v-for="(choice, index) in choices" :key="index"  @tap="() => selectEventChoices(index)" v-model="choices[index].description"/>
                             </FlexboxLayout>
                         </FlexboxLayout>
                     </FixedAbsoluteLayout>
@@ -101,6 +101,7 @@
 
 <script>
     import initialEventsObject from "../assets/initialEvents.js";
+    import { isAndroid } from 'tns-core-modules/ui/page/page';
 
     export default {
         data: () => {
@@ -108,6 +109,7 @@
                 page: null,
                 capCom: 5,
                 libCons: 4,
+                myCandidate: {},
                 myTraits: [],
                 poppingEvent: false,
                 onStatusWindow: false,
@@ -237,6 +239,7 @@
                                                     clearInterval(temp);
                                                 }
                                             }, 1000);
+                                            this.myCandidate = this.$store.getters.getMyCandidate;
                                         });
                                 });
                         });
@@ -308,6 +311,12 @@
                 //     }
                 // });
             },
+            onEventChoicesLoaded(args) {
+                if (isAndroid) {
+                    args.object.android.setMinWidth(0);
+                    args.object.android.setMinHeight(0);
+                }
+            },
             regionRatings(city) {
                 if (!this.storeLoading) {
                     return {};
@@ -340,15 +349,16 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 return sortedArrayOfObject;
             },
             selectEventChoices(index) {
+                this.$store.dispatch('selectEventChoices', { event: this.event, index })
+                    .then(() => {
+                        this.$store.dispatch('chooseNextEvent');
+                    });
+                this.myCandidate = this.$store.getters.getMyCandidate;
                 this.capCom = Math.round(this.myCandidate.capCom * 1000) / 1000;
                 this.libCons = Math.round(this.myCandidate.libCons * 1000) / 1000;
                 if (this.page.getViewById("statusGraph")) this.page.getViewById("statusGraph").reload();
                 this.page.getViewById("map").style.zIndex="0";
                 this.poppingEvent = false;
-                this.$store.dispatch('selectEventChoices', { index })
-                    .then(() => {
-                        this.$store.dispatch('chooseNextEvent');
-                    })
             },
         },
         watch: {
@@ -416,9 +426,6 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
             },
             ratings() {
                 return this.$store.getters.getTotalRatings;
-            },
-            myCandidate() {
-                return this.$store.getters.getMyCandidate;
             },
             sortedRatings() {
                 return this.makeSortedRatings(this.ratings);
@@ -862,60 +869,78 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 justify-content: center;
                 align-items: stretch;
                 .eventChoice {
-                    margin-right: 2;
+                    padding: 10;
                     font-size: (3 * 4.34);
                     &.width400 {
+                        padding: (4 * 3.34);
                         font-size: (4 * 4.34);
                     }
                     &.width500 {
+                        padding: (5 * 3.34);
                         font-size: (5 * 4.34);
                     }
                     &.width600 {
+                        padding: (6 * 3.34);
                         font-size: (6 * 4.34);
                     }
                     &.width700 {
+                        padding: (7 * 3.34);
                         font-size: (7 * 4.34);
                     }
                     &.width800 {
+                        padding: (8 * 3.34);
                         font-size: (8 * 4.34);
                     }
                     &.width900 {
+                        padding: (9 * 3.34);
                         font-size: (9 * 4.34);
                     }
                     &.width1000 {
+                        padding: (10 * 3.34);
                         font-size: (10 * 4.34);
                     }
                     &.width1100 {
+                        padding: (11 * 3.34);
                         font-size: (11 * 4.34);
                     }
                     &.width1200 {
+                        padding: (12 * 3.34);
                         font-size: (12 * 4.34);
                     }
                     &.width1300 {
+                        padding: (13 * 3.34);
                         font-size: (13 * 4.34);
                     }
                     &.width1400 {
+                        padding: (14 * 3.34);
                         font-size: (14 * 4.34);
                     }
                     &.width1500 {
+                        padding: (15 * 3.34);
                         font-size: (15 * 4.34);
                     }
                     &.width1600 {
+                        padding: (16 * 3.34);
                         font-size: (16 * 4.34);
                     }
                     &.width1700 {
+                        padding: (17 * 3.34);
                         font-size: (17 * 4.34);
                     }
                     &.width1800 {
+                        padding: (18 * 3.34);
                         font-size: (18 * 4.34);
                     }
                     &.width1900 {
+                        padding: (19 * 3.34);
                         font-size: (19 * 4.34);
                     }
                     &.width2000 {
+                        padding: (20 * 3.34);
                         font-size: (20 * 4.34);
                     }
                     &.width2100 {
+                        padding: (21 * 3.34);
                         font-size: (21 * 4.34);
                     }
                 }
