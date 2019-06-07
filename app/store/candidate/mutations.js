@@ -6,6 +6,7 @@ const mutations = {
         for (let i = 1; i < 13; i++) {
             const candidate = JSON.parse(JSON.stringify(candidateTemplate));
             candidate.party = Math.ceil(i / 3);
+            candidate.numOnParty = Math.ceil(i % 3) || 3;
             switch (candidate.party) {
                 case 1: // 더불어민주당
                     candidate.capCom = normalRandom(-0.5, 2);

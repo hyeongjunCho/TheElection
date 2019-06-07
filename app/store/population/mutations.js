@@ -77,8 +77,8 @@ const mutations = {
     },
     setPoliticalOrientation: function (state) {
         const { electorates } = state;
-        const capComAvg = 0;
-        const libConsAvg = 0;
+        let capComAvg = 0;
+        let libConsAvg = 0;
 
         for (let i = 0; i < electorates.length; i++) {
             let capComMean = 0;
