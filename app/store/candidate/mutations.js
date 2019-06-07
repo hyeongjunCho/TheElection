@@ -55,7 +55,21 @@ const mutations = {
                 i -= 1;
             }
         }
-    }
+    },
+    selectEventChoices: function (state, payload) {
+        const { event, index } = payload;
+        if (index === -1) return;
+        const { candidates, myCandidate } = state;
+        if (event.choices[index].effect.libCons) {
+            candidates[myCandidate].libCons += event.choices[index].effect.libCons;
+        } else if (event.choices[index].effect.capCom) {
+            candidates[myCandidate].capCom += event.choices[index].effect.capCom;
+        } else if (Object.keys(event.choices[index].effect).length) {
+            const traitName = Object.keys(event.choices[index].effect)[0];
+            const duration = traitsDict[traitName].duration;
+            candidates[myCandidate].traits.push({ name: traitName, duration });
+        }
+    },
 };
 
 const normalRandom = function (mean, variance) {
