@@ -370,12 +370,8 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     });
                 if (this.DdayInternal % 7 === 0 && this.DdayInternal < 360) {
                     this.eventNumInternal++;
-                    this.eventDescription = 'a' * this.eventNumInternal;
-                    if (Math.random() < 0.5) {
-                        this.choices = ['aa', 'bb'];
-                    } else {
-                        this.choices = ['cc', 'dd', 'ee'];
-                    }
+                    this.eventDescription = "최근 게임 중독에 대한 우려가 제기되면서 정부 차원의 규제를 요구하는 학부모들이 늘었습니다. 이에 대한 당신의 견해는 어떻습니까?";
+                    this.choices = ["게임은 중독을 유발할 수 있고 이는 보건 문제로 다뤄져야 합니다.", "게임은 하나의 산업으로 섣불리 정부가 규제하기보단 내부 방침에 따르는 것이 옳습니다."];
                     this.page.getViewById("map").style.zIndex="9999";
                     this.onStatusWindow = false;
                     this.poppingEvent = true;

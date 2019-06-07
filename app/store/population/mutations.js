@@ -77,6 +77,8 @@ const mutations = {
     },
     setPoliticalOrientation: function (state) {
         const { electorates } = state;
+        const capComAvg = 0;
+        const libConsAvg = 0;
 
         for (let i = 0; i < electorates.length; i++) {
             let capComMean = 0;
@@ -204,8 +206,12 @@ const mutations = {
             } while (libCons <= -5 || libCons >= 5);
 
             electorates[i].capCom = capCom;
-            electorates[i].libCons = libCons;
+            electorates[i].libCons = libCons;     
+            capComAvg += capCom;
+            libConsAvg += libCons;
         }
+        state.capComAvg = capComAvg / state.numOfElectorates;
+        state.libConsAvg = libConsAvg / state.numOfElectorates;
     },
     initializeRating: function (state, payload) {
         const { electorates } = state;
