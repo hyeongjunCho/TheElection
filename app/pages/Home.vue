@@ -67,7 +67,7 @@
                 <AbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
                     <FixedAbsoluteLayout v-if="poppingEvent" class="event" left="0" top="0" width="100%" height="100%">
                         <Label class="eventNum" customLeft="5%" customTop="5%" v-model="eventNum" />
-                        <Label class="eventDescription" customLeft="5%" customTop="15%" v-model="eventDescription" />
+                        <Label class="eventDescription" customLeft="5%" customTop="15%" width="90%" v-model="eventDescription" textWrap="true"/>
                         <FlexboxLayout class="eventChoices" customTop="45%" customLeft="5%" width="90%" height="50%">
                             <Button class="eventChoice" v-for="(choice, index) in choices" :key="index" @tap="() => selectChocies(index)" v-model="choices[index]"/>
                         </FlexboxLayout>
@@ -368,12 +368,8 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     });
                 if (this.DdayInternal % 7 === 0 && this.DdayInternal < 360) {
                     this.eventNumInternal++;
-                    this.eventDescription = 'a' * this.eventNumInternal;
-                    if (Math.random() < 0.5) {
-                        this.choices = ['aa', 'bb'];
-                    } else {
-                        this.choices = ['cc', 'dd', 'ee'];
-                    }
+                    this.eventDescription = "최근 게임 중독에 대한 우려가 제기되면서 정부 차원의 규제를 요구하는 학부모들이 늘었습니다. 이에 대한 당신의 견해는 어떻습니까?";
+                    this.choices = ["게임은 중독을 유발할 수 있고 이는 보건 문제로 다뤄져야 합니다.", "게임은 하나의 산업으로 섣불리 정부가 규제하기보단 내부 방침에 따르는 것이 옳습니다."];
                     this.page.getViewById("map").style.zIndex="9999";
                     this.poppingEvent = true;
                 } else if (this.DdayInternal % 7 === 2) {
