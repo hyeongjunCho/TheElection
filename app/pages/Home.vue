@@ -67,7 +67,7 @@
                 <AbsoluteLayout class="map" id="map" customTop="25%" customLeft="10%" width="80%" height="63.0%">
                     <FixedAbsoluteLayout v-if="poppingEvent" class="event" left="0" top="0" width="100%" height="100%">
                         <Label class="eventNum" customLeft="5%" customTop="5%" v-model="eventNum" />
-                        <Label class="eventDescription" customLeft="5%" customTop="15%" v-model="eventDescription" />
+                        <Label class="eventDescription" customLeft="5%" customTop="15%" width="90%" v-model="eventDescription" textWrap="true"/>
                         <FlexboxLayout class="eventChoices" customTop="45%" customLeft="5%" width="90%" height="50%">
                             <Button class="eventChoice" v-for="(choice, index) in choices" :key="index" @tap="() => selectChocies(index)" v-model="choices[index]"/>
                         </FlexboxLayout>
