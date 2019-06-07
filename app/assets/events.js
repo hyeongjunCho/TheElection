@@ -251,25 +251,25 @@ export default [
     },
     {
         name: "담배와의 싸움",
-        description: "",
+        description: "몇 해 전부터 금연은 새로운 사회 기조가 되었습니다. 이에 국민들은 찬반 양론을 펼치고 있는데요, 후보님께서는 어떻게 생각하십니까?",
         choices:[
             {
-                description: "",
+                description: "담배 가격을 올릴 예정입니다.",
                 effect:{
-
+                    "capCom": 0.001,
                 },
             },
             {
-                description: "",
+                description: "담뱃갑의 디자인을 교체합니다.",
                 effect: {
-
+                    "libCons": -0.002,
                 },
             }
         ]
     },
     {
         name: "정치자금법 위반",
-        description: "",
+        description: "상대 후보가 네거티브 전략을 폈습니다. 보좌관의 월급을 캠프 활동비로 빼돌려 썼다는 지적인데요.",
         choices:[
             {
                 description: "",

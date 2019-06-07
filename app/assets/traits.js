@@ -139,8 +139,8 @@ export default {
         "effect": {
             "electorates": {
                 "probability": 0.05,
-                "capCom": +0.25,
-                "libcons": +0.25,
+                "capCom": 0.25,
+                "libCons": 0.25,
             }
         },
         "duration": 10,

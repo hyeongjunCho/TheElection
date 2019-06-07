@@ -349,9 +349,6 @@ const mutations = {
                             e === "inflow") {
                                 probability += effect[e];
                             }
-                        else if (e === "factor") {
-                            factor += effect[e];
-                        }
                     }
                 }
                 probability += outflow;
