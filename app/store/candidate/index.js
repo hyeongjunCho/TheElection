@@ -11,6 +11,7 @@ export default {
             //     capCom: 0,
             //     libCons: 0,
             //     traits: [],
+            //     noAnswer: 0,
             // }
         },
         candidateTemplate: {
@@ -19,6 +20,7 @@ export default {
             capCom: 0,  // capitalist-communist value, -5 ~ +5
             libCons: 0, // liberal-conservative value, -5 ~ +5
             traits: [],
+            noAnswer: 0,
         },
         activeCandidates: {
             1: true,
