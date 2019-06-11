@@ -30,6 +30,9 @@
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
             </FixedAbsoluteLayout>
+            <FixedAbsoluteLayout class="failed" v-if="failed" top="0" left="0" width="100%" height="100%" zIndex="9999" background="#e6f0f0f0">
+                <Button customLeft="35%" customTop="40%" width="30%" height="15%" text="Fail"/>
+            </FixedAbsoluteLayout>
             <FixedAbsoluteLayout v-if="storeLoading && finishInitialStage && finishCustomizingStage" top="0" left="0" width="100%" height="100%">
                 <Label class="Dday" :class="'width' + screenWidth" customTop="5%" customLeft="10%" v-model="Dday" />
                 <Label class="places" :class="'width' + screenWidth" textWrap="true" customTop="4.7%" customLeft="35%" width="65%" style="word-break:word;z-index:1;">
@@ -132,6 +135,7 @@
                 selectParty: false,
                 chooseFirstTraitQuestion: false,
                 finishCustomizingStage: false,
+                failed: false,
                 statusHtmlOpen: `
 <!doctype html>
 <html>
@@ -364,10 +368,14 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         watch: {
             DdayInternal() {
                 if (this.DdayInternal === 100) {
-                    this.$store.dispatch('primary')
-                        .then((payload) => {
-                            this.$store.dispatch('primaryCandidates', payload);
-                        });
+                    const ret = {}
+                    this.$store.commit('primary', { candidates: this.$store.getters.candidates, ret })
+                    this.$store.dispatch('primaryCandidates', ret)
+                        .then(() => {
+                            if (!this.$store.getters.isActiveMyCandidate) {
+                                this.failed = true;
+                            }
+                        })
                 }
                 this.$store.dispatch('resetSupportingCandidate')
                     .then(() => {
@@ -528,7 +536,6 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
     // Custom styles
     * {
         user-select: none;
-        user-drag: none;
     }
 
     .loading {
@@ -538,6 +545,15 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         Label {
             position: absolute;
             font-size: 20;
+            text-align: center;
+            color: black;
+        }
+    }
+
+    .failed {
+        Button {
+            position: absolute;
+            font-size: 30;
             text-align: center;
             color: black;
         }

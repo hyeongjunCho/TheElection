@@ -15,7 +15,7 @@ const actions = {
         context.commit('resetSupportingCandidate', {candidates: context.rootState.candidate.candidates, myCandidateKey: context.rootState.candidate.myCandidate, activeCandidatesList: context.rootState.candidate.activeCandidatesList});
     },
     primary(context) {
-        context.commit('primary');
+        context.commit('primary', {candidates: context.rootState.candidate.candidates});
     },
 };
 

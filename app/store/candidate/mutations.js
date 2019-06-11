@@ -76,8 +76,8 @@ const mutations = {
     },
     primaryCandidates: function (state, payload) {
         const { activeCandidates, activeCandidatesList } = payload;
-        state.activeCandidates = activeCandidates;
-        state.activeCandidatesList = activeCandidatesList;
+        state.activeCandidates = JSON.parse(JSON.stringify(activeCandidates));
+        state.activeCandidatesList = JSON.parse(JSON.stringify(activeCandidatesList));
     },
 };
 
