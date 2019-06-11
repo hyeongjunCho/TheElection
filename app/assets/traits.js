@@ -132,7 +132,7 @@ export default {
     "정치자금법 위반": {
         "description": "정치자금법 위반 사실이 드러나 이미지에 타격을 입었습니다.. 지지율이 급격히 하락합니다.",
         "effect": {
-            "correctionDown": 0.001,
+            "correctionDown": 0.003,
             "outflow": 0.005
         },
         "duration": 50,
@@ -216,5 +216,35 @@ export default {
             "NorthGyeongsang": 0.007,
         },
         "duration": 30,
+    },
+    "빨갱이": {
+        "description": "한국에서 공산주의는 아직도 금기시됩니다. 빨갱이로 찍힌 당신은 지지율이 떨어지지만, 일부 사람들은 당신의 생각에 찬동합니다.",
+        "effect": {
+            "correctionDown": 0.003,
+            0: 0.005,
+            "Jeju": 0.005,
+            "electorates": {
+                "probability": 0.01,
+                "capCom": -0.5,
+                "libCons": 0,
+            },
+        },
+        "duration": 20,
+    },
+    "후보님 사랑합니다": {
+        "description": "당신은 열성적인 지지자를 거느렸습니다. 표의 유출이 줄어듭니다.",
+        "effect": {
+            "outflow": -0.0075,
+        },
+        "duration": 45,
+    },
+    "민주화의 성지": {
+        "description": "호남의 민주화 정신을 강조한 당신은 호남에서 호감을 얻기 시작합니다.",
+        "effect": {
+            "NorthJeolla": 0.005,
+            "SouthJeolla": 0.005,
+            "Gwangju": 0.005,
+        },
+        "duration": 15,
     }
 }

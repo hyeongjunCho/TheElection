@@ -12,6 +12,7 @@ export default [
             {
                 description: "민생을 살리는 대통령이 되겠습니다.",
                 effect: {   // fill out later
+                    "toAvg": '',
                 },
             },
             {
@@ -564,73 +565,87 @@ export default [
     },
     {
         name: "경제 성장은?",
-        description: "",
+        description: "결국 대통령의 업무는 경제를 살리는 것이라고 할 수 있겠습니다. 하지만 진영 별로 어떻게 경제를 성장시킬 것인지에 대해서는 의견이 갈리고 있는데요. 인터뷰에서 당신은 당신이 펼칠 경제 정책의 기조를 밝혀야 합니다.",
         choices:[
             {
-                description: "",
+                description: "규제의 철폐와 기업 경쟁력 증대를 통한 혁신주도성장",
                 effect:{
-
+                    "capCom": 0.5,
                 },
             },
             {
-                description: "",
+                description: "생활소득수준을 끌어올려 성장과 분배를 동시에 이루는 소득주도성장",
                 effect: {
-
+                    "capCom": -0.3,
                 },
-            }
+            },
+            {
+                description: "부르주아들의 불의한 재산을 무상몰수 무상분배해야 합니다!!",
+                effect: {
+                    "capCom": -0.9,
+                    "빨갱이": '',
+                },
+            },
         ]
     },
     {
         name: "대체복무제",
-        description: "",
+        description: "유엔의 권고에 따르면 양심적 병역거부자 등을 위한 대체복무제를 마련해야 합니다. 이를 두고 찬반 논란이 거세지고 있습니다. 이에 대해 어떤 입장을 가지고 있습니까?",
         choices:[
             {
-                description: "",
+                description: "대상자를 엄격하게 심사하고, 복무 기간을 늘려 공정성을 지키도록 하겠습니다.",
                 effect:{
-
+                    "libCons": -0.5,
                 },
             },
             {
-                description: "",
+                description: "국제인권기준을 엄격하게 준수해 복무자들의 인권을 지킬 수 있도록 하겠습니다.",
                 effect: {
-
+                    "libCons": 0.3,
                 },
             }
         ]
     },
     {
         name: "ILO 비준, 입법 먼저?",
-        description: "",
+        description: "국제노동기구 핵심협약 비준을 둘러싼 논의가 진행되고 있습니다. 쟁점이 되는 몇가지 조항을 비준하면 현행법의 수정이 필요하기 때문입니다. 이에 대한 당신은 어떠합니까?",
         choices:[
             {
-                description: "",
+                description: "군 복무와 노조로 인해 초래되는 혼란을 막기 위해 입법은 신중히 진행해야 합니다.",
                 effect:{
-
+                    "capCom": 0.3,
                 },
             },
             {
-                description: "",
+                description: "노동부에서 권고한 바와 같이 입법과 비준을 동시에 진행토록 하겠습니다.",
                 effect: {
-
+                    "capCom": -0.2,
                 },
             }
         ]
     },
     {
         name: "민주화 운동",
-        description: "",
+        description: "모 정당의 모 의원이 민주화 운동을 시민운동이 아닌 폭동이라고 발언하는 일이 일어났습니다. 유력 정치인들이 모두 한 마디씩 우려를 표하고 있는 상황입니다.",
         choices:[
             {
-                description: "",
+                description: "민주화 운동은 부정하지는 않지만 역사의 해석은 모두에게 열려 있어야...",
                 effect:{
-
+                    "libCons": -0.5,
                 },
             },
             {
-                description: "",
+                description: "해당 의원은 반드시 호남 시민들께 사과하십시오!",
                 effect: {
-
+                    "libCons": 0.1,
+                    "민주화의 성지": '',
                 },
+            },
+            {
+                description: "당과 의회 차원에서 엄벌을 내려야 합니다!",
+                effect: {
+                    "libCons": 0.2,
+                }
             }
         ]
     },
@@ -689,7 +704,7 @@ export default [
         ]
     },
     {
-        name: "손흥민",
+        name: "커뮤니티 폐쇄",
         description: "",
         choices:[
             {
@@ -942,18 +957,18 @@ export default [
     },
     {
         name: "조폭과의 유착?",
-        description: "",
+        description: "어젯 밤 모 시사프로그램에서 조폭과 정계의 유착을 다루었습니다. 그런데 당신이 지지자 모임에서 찍은 사진도 문제가 되었다더군요. 그 사진에 나온 사람들 중 하나가 조폭이라나요?",
         choices:[
             {
-                description: "",
+                description: "문제의 그 지지자는 현재 다른 정치인(이 모씨)의 지지 모임에 있으면 저는 관련이 없습니다. 크흠.",
                 effect:{
-
+                    "달변가": '',
                 },
             },
             {
-                description: "",
+                description: "그냥 폭풍 한 번 지나가는거야! 시련을 통해서 나는 더 강해지는 거라고!",
                 effect: {
-
+                    "후보님 사랑합니다": '',
                 },
             }
         ]
