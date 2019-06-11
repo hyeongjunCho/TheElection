@@ -428,12 +428,25 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     for (let i = 0; i < this.event.choices.length; i++) {
                         const option = this.event.choices[i].option;
                         let active = true;
-                        if (option) {
-                            for (let key in option) {
-                                if (!option[key] && this.myTraits.indexOf(key) !== -1) {
+                        for (let key in option) {
+                            if (option[key]) {
+                                let exist = false;
+                                for (let j = 0; j < this.myTraits.length; j++) {
+                                    if (this.myTraits[j].name === key) {
+                                        exist = true;
+                                        break;
+                                    }
+                                }
+                                if (!exist) active = false;
+                            }
+                            if (!active) break;
+                            for (let j = 0; j < this.myTraits.length; j++) {
+                                if (!option[key] && this.myTraits[j].name === key) {
                                     active = false;
+                                    break;
                                 }
                             }
+                            if (!active) break;
                         }
                         if (active) {
                             this.choices.push(this.event.choices[i]);
