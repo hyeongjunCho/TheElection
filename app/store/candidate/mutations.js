@@ -39,7 +39,7 @@ const mutations = {
         const { candidates, myCandidate } = state;
         const myCandidateObject = candidates[myCandidate];
         if (payload.trait){
-            const duration = traitsDict[payload.trait].duration;
+            const duration = traitsDict[payload.trait].duration || 1;
             myCandidateObject.traits.push({name: payload.trait, duration});
         }
     },
@@ -57,9 +57,13 @@ const mutations = {
         }
     },
     selectEventChoices: function (state, payload) {
-        const { event, index } = payload;
-        if (index === -1) return;
+        const { event } = payload;
+        let { index } = payload;
         const { candidates, myCandidate } = state;
+        if (index === -1) {
+            index = Math.ceil((1 - Math.random()) * event.choices.length);
+            candidates[myCandidate].noAnswer++;
+        }
         if (event.choices[index].effect.libCons) {
             candidates[myCandidate].libCons += event.choices[index].effect.libCons;
         } else if (event.choices[index].effect.capCom) {
@@ -69,6 +73,11 @@ const mutations = {
             const duration = traitsDict[traitName].duration;
             candidates[myCandidate].traits.push({ name: traitName, duration });
         }
+    },
+    primaryCandidates: function (state, payload) {
+        const { activeCandidates, activeCandidatesList } = payload;
+        state.activeCandidates = activeCandidates;
+        state.activeCandidatesList = activeCandidatesList;
     },
 };
 

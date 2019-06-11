@@ -120,7 +120,7 @@
                 event: {},
                 choices: [],
                 question: '',
-                DdayInternal: 366,
+                DdayInternal: 121,
                 firstPlaceColor: '',
                 secondPlaceColor: '',
                 thirdPlaceColor: '',
@@ -239,7 +239,6 @@
                                                     clearInterval(temp);
                                                 }
                                             }, 1000);
-                                            this.myCandidate = this.$store.getters.getMyCandidate;
                                         });
                                 });
                         });
@@ -267,6 +266,7 @@
             onSelectParty(party) {
                 this.$store.dispatch('setMyCandidate', { party })
                     .then(() => {
+                        this.myCandidate = this.$store.getters.getMyCandidate;
                         this.capCom = Math.round(this.myCandidate.capCom * 1000) / 1000;
                         this.libCons = Math.round(this.myCandidate.libCons * 1000) / 1000;
                     });
@@ -363,11 +363,19 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         },
         watch: {
             DdayInternal() {
+                if (this.DdayInternal === 100) {
+                    this.$store.dispatch('primary')
+                        .then((payload) => {
+                            this.$store.dispatch('primaryCandidates', payload);
+                        });
+                }
                 this.$store.dispatch('resetSupportingCandidate')
                     .then(() => {
                         this.$store.dispatch('countDownTraits');
                         this.$store.dispatch('setRating')
                         .then(() => {
+                            this.capCom = Math.round(this.myCandidate.capCom * 1000) / 1000;
+                            this.libCons = Math.round(this.myCandidate.libCons * 1000) / 1000;
                             this.firstPlaceColor = this.partyColors[this.firstPlaceInternal.party];
                             this.secondPlaceColor = this.partyColors[this.secondPlaceInternal.party];
                             this.thirdPlaceColor = this.partyColors[this.thirdPlaceInternal.party];
