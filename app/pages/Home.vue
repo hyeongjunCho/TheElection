@@ -9,12 +9,12 @@
             </FixedAbsoluteLayout>
             <FixedAbsoluteLayout v-if="storeLoading && finishInitialStage && !finishCustomizingStage" top="0" left="0" width="100%" height="100%">
                 <FixedAbsoluteLayout v-if="!selectParty" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">
-                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" text="당신의 뿌슝빠슝을 설정하세요"/>
+                    <Label class="title" :class="'width' + screenWidth" customLeft="5%" customTop="5%" width="90%" textWrap="true" text="당신의 소속 정당을 설정하세요"/>
                     <FlexboxLayout class="choices" customTop="25%" customLeft="5%" width="90%" height="65%">
-                        <Button class="choice" text="1 뿌슝당" @tap="() => onSelectParty(1)"/>
-                        <Button class="choice" text="2 빠슝당" @tap="() => onSelectParty(2)"/>
-                        <Button class="choice" text="3 뽀슝당" @tap="() => onSelectParty(3)"/>
-                        <Button class="choice" text="4 삐슝당" @tap="() => onSelectParty(4)"/>
+                        <Button class="choice" text="1 중도당" @tap="() => onSelectParty(1)"/>
+                        <Button class="choice" text="2 극우당" @tap="() => onSelectParty(2)"/>
+                        <Button class="choice" text="3 개혁보수당" @tap="() => onSelectParty(3)"/>
+                        <Button class="choice" text="4 진보당" @tap="() => onSelectParty(4)"/>
                     </FlexboxLayout>
                 </FixedAbsoluteLayout>
                 <FixedAbsoluteLayout v-else-if="selectParty && !chooseFirstTraitQuestion" class="customize" customLeft="5%" customTop="20%" width="90%" height="70%">

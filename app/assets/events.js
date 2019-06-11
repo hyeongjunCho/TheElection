@@ -12,7 +12,7 @@ export default [
             {
                 description: "민생을 살리는 대통령이 되겠습니다.",
                 effect: {   // fill out later
-                    "toAvg": 0.5,
+                    "toAvg": 0.3,
                 },
             },
             {
@@ -391,25 +391,25 @@ export default [
             {
                 description: "극우당과 비슷하게",
                 effect: {
-                    "toSecondParty": '',
+                    "toSecondParty": 0.1,
                 },
             },
             {
                 description: "개혁보수당과 비슷하게",
                 effect: {
-                    "toThirdParty": '',
+                    "toThirdParty": 0.1,
                 },
             },
             {
                 description: "중도당과 비슷하게",
                 effect: {
-                    "toFirstParty": '',
+                    "toFirstParty": 0.1,
                 },
             },
             {
                 description: "진보당과 비슷하게",
                 effect: {
-                    "toFourthParty": '',
+                    "toFourthParty": 0.1,
                 },
             }
         ]
@@ -1016,7 +1016,7 @@ export default [
             {
                 description: "먼저가 사람인 나라를 만들겠습니다.",
                 effect: {
-                    "toAvg": 0.2,
+                    "toAvg": 0.1,
                 },
             },
             {

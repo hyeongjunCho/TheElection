@@ -71,7 +71,20 @@ const mutations = {
         } else if (event.choices[index].effect.toAvg) {
             candidates[myCandidate].libCons = candidates[myCandidate].libCons * (1 - event.choices[index].effect.toAvg) + libConsAvg * event.choices[index].effect.toAvg;
             candidates[myCandidate].capCom = candidates[myCandidate].capCom * (1 - event.choices[index].effect.toAvg) + capComAvg * event.choices[index].effect.toAvg;
-        } else if (Object.keys(event.choices[index].effect).length) {
+        } else if (event.choices[index].effect.toFirstParty) {   
+            candidates[myCandidate].libCons = candidates[myCandidate].libCons * (1 - event.choices[index].effect.toFirstParty) + 0 * event.choices[index].effect.toFirstParty;
+            candidates[myCandidate].capCom = candidates[myCandidate].capCom * (1 - event.choices[index].effect.toFirstParty) + -0.5 * event.choices[index].effect.toFirstParty;
+        } else if (event.choices[index].effect.toSecondParty) {   
+            candidates[myCandidate].libCons = candidates[myCandidate].libCons * (1 - event.choices[index].effect.toSecondParty) + -1.5 * event.choices[index].effect.toSecondParty;
+            candidates[myCandidate].capCom = candidates[myCandidate].capCom * (1 - event.choices[index].effect.toSecondParty) + 2 * event.choices[index].effect.toSecondParty;
+        } else if (event.choices[index].effect.toThirdParty) {   
+            candidates[myCandidate].libCons = candidates[myCandidate].libCons * (1 - event.choices[index].effect.toThirdParty) + -0.25 * event.choices[index].effect.toThirdParty;
+            candidates[myCandidate].capCom = candidates[myCandidate].capCom * (1 - event.choices[index].effect.toThirdParty) + 1.5 * event.choices[index].effect.toThirdParty;
+        } else if (event.choices[index].effect.toFourthParty) {   
+            candidates[myCandidate].libCons = candidates[myCandidate].libCons * (1 - event.choices[index].effect.toFourthParty) + 2 * event.choices[index].effect.toFourthParty;
+            candidates[myCandidate].capCom = candidates[myCandidate].capCom * (1 - event.choices[index].effect.toFourthParty) + -1.5 * event.choices[index].effect.toFourthParty;
+        } 
+        else if (Object.keys(event.choices[index].effect).length) {
             const traitName = Object.keys(event.choices[index].effect)[0];
             const duration = traitsDict[traitName].duration;
             candidates[myCandidate].traits.push({ name: traitName, duration });
