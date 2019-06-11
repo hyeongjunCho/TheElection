@@ -274,7 +274,7 @@ const mutations = {
                 activeCandidatesList.push[i];
             }
         }
-        
+
         for (let i = 0; i < electorates.length; i++) {
             electorates.goto = {
                 1: 0,
@@ -300,8 +300,8 @@ const mutations = {
                     minimumDistance = currentDistance;
                 }
             }
-            electorates.supportingCandidate = minimumDistanceCandidateKey;
-            electorates.goto[minimumDistanceCandidateKey] = 1;
+            electorates[i].supportingCandidate = minimumDistanceCandidateKey;
+            electorates[i].goto[minimumDistanceCandidateKey] = 1;
         }
 
         return new Promise((resolve, reject) => {
