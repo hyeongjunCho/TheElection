@@ -235,8 +235,9 @@ const mutations = {
             electorates[i].goto[electorates[i].supportingCandidate] = 1;
         }
     },
-    primary: function (state) {
+    primary: function (state, payload) {
         const { ratings, electorates } = state;
+        const { candidates, ret } = payload;
         const activeCandidates = {
             1: true,
             2: true,
@@ -274,25 +275,14 @@ const mutations = {
         }
 
         for (let i = 1; i < 13; i++) {
-            if (activeCandidates[i] === true) {
-                activeCandidatesList.push[i];
+            if (activeCandidates[i]) {
+                activeCandidatesList.push(i);
             }
         }
 
         for (let i = 0; i < electorates.length; i++) {
-            electorates.goto = {
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0,
-                5: 0,
-                6: 0,
-                7: 0,
-                8: 0,
-                9: 0,
-                10: 0,
-                11: 0,
-                12: 0,
+            for (let j = 1; j < 13; j++) {
+                electorates[i].goto[j] = 0;
             }
             let minimumDistance = 1000;
             let minimumDistanceCandidateKey = 0;
@@ -308,9 +298,8 @@ const mutations = {
             electorates[i].goto[minimumDistanceCandidateKey] = 1;
         }
 
-        return new Promise((resolve, reject) => {
-            resolve({activeCandidates, activeCandidatesList});
-        })
+        ret.activeCandidates = activeCandidates;
+        ret.activeCandidatesList = activeCandidatesList;
     },
     setRating: function (state) {
         const totalRatings = {
