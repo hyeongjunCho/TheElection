@@ -424,7 +424,19 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     this.eventNumInternal++;
                     this.event = this.$store.getters.getEvent;
                     this.eventDescription = this.event.description;
-                    this.choices = this.event.choices;
+                    this.choices = [];
+                    for (let i = 0; i < this.event.choices.length; i++) {
+                        const option = this.event.choices[i].option;
+                        let active = true;
+                        for (let key in option) {
+                            if (!option[key] && this.myTraits.indexOf(key) !== -1) {
+                                active = false;
+                            }
+                        }
+                        if (active) {
+                            this.choices.push(this.event.choices[i]);
+                        }
+                    }
                     this.page.getViewById("map").style.zIndex="9999";
                     this.onStatusWindow = false;
                     this.poppingEvent = true;
