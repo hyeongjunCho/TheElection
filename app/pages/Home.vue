@@ -120,7 +120,7 @@
                 event: {},
                 choices: [],
                 question: '',
-                DdayInternal: 366,
+                DdayInternal: 121,
                 firstPlaceColor: '',
                 secondPlaceColor: '',
                 thirdPlaceColor: '',
@@ -363,6 +363,12 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         },
         watch: {
             DdayInternal() {
+                if (this.DdayInternal === 100) {
+                    this.$store.dispatch('primary')
+                        .then((payload) => {
+                            this.$store.dispatch('primaryCandidates', payload);
+                        });
+                }
                 this.$store.dispatch('resetSupportingCandidate')
                     .then(() => {
                         this.$store.dispatch('countDownTraits');

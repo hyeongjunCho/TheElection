@@ -223,13 +223,90 @@ const mutations = {
                 const candidate = candidates[key];
                 let currentDistance = distance(electorates[i].capCom, electorates[i].libCons, candidate.capCom, candidate.libCons);
                 electorates[i].goto[key] = 0;
-                if (currentDistance <= minDistance) {
+                if (currentDistance <= minDistance && candidate) {
                     minDistance = currentDistance;
                     electorates[i].supportingCandidate = key;
                 }
             }
             electorates[i].goto[electorates[i].supportingCandidate] = 1;
         }
+    },
+    primary: function (state) {
+        const { ratings, electorates } = state;
+        const activeCandidates = {
+            1: true,
+            2: true,
+            3: true,
+            4: true,
+            5: true,
+            6: true,
+            7: true,
+            8: true,
+            9: true,
+            10: true,
+            11: true,
+            12: true,
+        }
+        const activeCandidatesList = [];
+
+        for (let i = 0; i < 4; i++) {
+            if (ratings[3 * i + 1] > ratings[3 * i + 2]) {
+                if (ratings[3 * i + 1] > ratings[3 * i + 3]) {
+                    activeCandidates[3 * i + 2] = false;
+                    activeCandidates[3 * i + 3] = false;
+                } else {
+                    activeCandidates[3 * i + 1] = false;
+                    activeCandidates[3 * i + 2] = false;
+                }
+            } else {
+                if (ratings[3 * i + 2] > ratings[3 * i + 3]) {
+                    activeCandidates[3 * i + 1] = false;
+                    activeCandidates[3 * i + 3] = false;
+                } else {
+                    activeCandidates[3 * i + 1] = false;
+                    activeCandidates[3 * i + 2] = false;
+                }
+            }
+        }
+
+        for (let i = 1; i < 13; i++) {
+            if (activeCandidates[i] === true) {
+                activeCandidatesList.push[i];
+            }
+        }
+        
+        for (let i = 0; i < electorates.length; i++) {
+            electorates.goto = {
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+                6: 0,
+                7: 0,
+                8: 0,
+                9: 0,
+                10: 0,
+                11: 0,
+                12: 0,
+            }
+            let minimumDistance = 1000;
+            let minimumDistanceCandidateKey = 0;
+            for (let candidateKey of activeCandidatesList) {
+                const currentCandidate = candidates[candidateKey];
+                const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
+                if (currentDistance < minimumDistance) {
+                    minimumDistanceCandidateKey = candidateKey;
+                    minimumDistance = currentDistance;
+                }
+            }
+            electorates.supportingCandidate = minimumDistanceCandidateKey;
+            electorates.goto[minimumDistanceCandidateKey] = 1;
+        }
+
+        return new Promise((resolve, reject) => {
+            resolve({activeCandidates, activeCandidatesList});
+        })
     },
     setRating: function (state) {
         const totalRatings = {
@@ -267,7 +344,7 @@ const mutations = {
     },
     resetSupportingCandidate: function(state, payload) {
         const { electorates } = state;
-        const { candidates, myCandidateKey } = payload;
+        const { candidates, myCandidateKey, activeCandidatesList } = payload;
         const myCandidate = candidates[myCandidateKey];
 
         for (let i = 0; i < electorates.length; i++) {
@@ -312,13 +389,13 @@ const mutations = {
                 const effect = traitsDict[newCandidate.traits[j].name].effect;
                 for (let e in effect) {
                     if (e === "outflow") {
-                        outflow += effect[e] / 11;
+                        outflow += effect[e] / (activeCandidatesList.length - 1);
                     }
                 }
             }
 
             let aggregate = 0;
-            for (let key in candidates) {
+            for (let key of activeCandidatesList) {
                 if (key === newCandidateKey)
                     continue;
 

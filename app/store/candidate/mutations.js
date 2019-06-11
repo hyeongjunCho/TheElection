@@ -74,6 +74,11 @@ const mutations = {
             candidates[myCandidate].traits.push({ name: traitName, duration });
         }
     },
+    primaryCandidates: function (state, payload) {
+        const { activeCandidates, activeCandidatesList } = payload;
+        state.activeCandidates = activeCandidates;
+        state.activeCandidatesList = activeCandidatesList;
+    },
 };
 
 const normalRandom = function (mean, variance) {

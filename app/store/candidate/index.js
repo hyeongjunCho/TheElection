@@ -12,6 +12,7 @@ export default {
             //     libCons: 0,
             //     traits: [],
             //     noAnswer: 0,
+            //     active: true,
             // }
         },
         candidateTemplate: {

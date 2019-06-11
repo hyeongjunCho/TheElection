@@ -13,7 +13,10 @@ const actions = {
     },
     selectEventChoices(context, payload) {
         context.commit('selectEventChoices', payload);
-    }
+    },
+    primaryCandidates(context, payload) {
+        context.commit('primaryCandidates', payload);
+    },
 };
 
 export default actions;
