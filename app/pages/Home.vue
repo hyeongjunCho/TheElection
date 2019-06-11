@@ -428,9 +428,11 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                     for (let i = 0; i < this.event.choices.length; i++) {
                         const option = this.event.choices[i].option;
                         let active = true;
-                        for (let key in option) {
-                            if (!option[key] && this.myTraits.indexOf(key) !== -1) {
-                                active = false;
+                        if (option) {
+                            for (let key in option) {
+                                if (!option[key] && this.myTraits.indexOf(key) !== -1) {
+                                    active = false;
+                                }
                             }
                         }
                         if (active) {
