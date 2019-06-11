@@ -167,9 +167,13 @@ const mutations = {
                 case 'NorthJeolla':
                 case 'SouthJeolla':
                 case 'Gwangju':
-                case 'Jeju':
                     capComMean -= 1;
                     libConsMean += 0.25;
+                    break;
+
+                case 'Jeju':
+                    capComMean -= 1;
+                    libConsMean -= 0.1;
                     break;
             }
 
@@ -326,7 +330,7 @@ const mutations = {
                 const currentDistance = distance(currentCandidate.capCom, currentCandidate.libCons, electorates[i].capCom, electorates[i].libCons);
                 let probability = 0;
                 
-                let factor = 0.015;
+                let factor = 0.03;
                 for (let j = 0; j < currentCandidate.traits.length; j++) {
                     const effect = traitsDict[currentCandidate.traits[j].name].effect;
                     for (let e in effect) {
