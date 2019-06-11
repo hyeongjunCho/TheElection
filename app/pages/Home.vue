@@ -367,7 +367,7 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
         },
         watch: {
             DdayInternal() {
-                if (this.DdayInternal === 100) {
+                if (this.DdayInternal === 112) {
                     const ret = {}
                     this.$store.commit('primary', { candidates: this.$store.getters.candidates, ret })
                     this.$store.dispatch('primaryCandidates', ret)

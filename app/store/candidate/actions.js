@@ -12,7 +12,7 @@ const actions = {
         context.commit('countDownTraits');
     },
     selectEventChoices(context, payload) {
-        context.commit('selectEventChoices', payload);
+        context.commit('selectEventChoices', { ...payload, capComAvg: context.rootState.population.capComAvg, libConsAvg: context.rootState.population.libConsAvg });
     },
     primaryCandidates(context, payload) {
         context.commit('primaryCandidates', payload);

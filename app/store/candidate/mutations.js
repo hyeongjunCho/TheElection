@@ -57,7 +57,7 @@ const mutations = {
         }
     },
     selectEventChoices: function (state, payload) {
-        const { event } = payload;
+        const { event, capComAvg, libConsAvg } = payload;
         let { index } = payload;
         const { candidates, myCandidate } = state;
         if (index === -1) {
@@ -68,6 +68,9 @@ const mutations = {
             candidates[myCandidate].libCons += event.choices[index].effect.libCons;
         } else if (event.choices[index].effect.capCom) {
             candidates[myCandidate].capCom += event.choices[index].effect.capCom;
+        } else if (event.choices[index].effect.toAvg) {
+            candidates[myCandidate].libCons = candidates[myCandidate].libCons * (1 - event.choices[index].effect.toAvg) + libConsAvg * event.choices[index].effect.toAvg;
+            candidates[myCandidate].capCom = candidates[myCandidate].capCom * (1 - event.choices[index].effect.toAvg) + capComAvg * event.choices[index].effect.toAvg;
         } else if (Object.keys(event.choices[index].effect).length) {
             const traitName = Object.keys(event.choices[index].effect)[0];
             const duration = traitsDict[traitName].duration;
