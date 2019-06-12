@@ -60,10 +60,6 @@ const mutations = {
         const { event, capComAvg, libConsAvg } = payload;
         let { index } = payload;
         const { candidates, myCandidate } = state;
-        if (index === -1) {
-            index = Math.ceil((1 - Math.random()) * event.choices.length);
-            candidates[myCandidate].noAnswer++;
-        }
         if (event.choices[index].effect.libCons) {
             candidates[myCandidate].libCons += event.choices[index].effect.libCons;
         } else if (event.choices[index].effect.capCom) {

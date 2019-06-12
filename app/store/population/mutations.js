@@ -343,7 +343,7 @@ const mutations = {
         for (let i = 0; i < electorates.length; i++) {
             let newCandidateKey = randomlySet(electorates[i].goto);
 
-            if (myCandidateKey && newCandidateKey) {
+            if (myCandidateKey && newCandidateKey && activeCandidatesList.indexOf(myCandidateKey) > -1) {
                 for (let j = 0; j < myCandidate.traits.length; j++) {
                     const effect = traitsDict[myCandidate.traits[j].name].effect;
                     for (let e in effect) {

@@ -353,6 +353,8 @@ document.getElementById('activeCityThirdCandidateBar').style.backgroundColor='${
                 return sortedArrayOfObject;
             },
             selectEventChoices(index) {
+                if (index === -1) index = Math.floor(Math.random() * this.event.choices.length);
+
                 this.$store.dispatch('selectEventChoices', { event: this.event, index })
                     .then(() => {
                         this.$store.dispatch('chooseNextEvent');
